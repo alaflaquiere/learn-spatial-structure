@@ -7,7 +7,7 @@ import pickle
 from argparse import ArgumentParser
 
 
-def generate_sensorimotor_data(agent, environment, explo_type, k, dir_data="dataset"):
+def generate_sensorimotor_data(agent, environment, explo_type, k, dest_data="dataset"):
     """
     TODO
     """
@@ -23,8 +23,11 @@ def generate_sensorimotor_data(agent, environment, explo_type, k, dir_data="data
                    "shift_t": np.full((k, 2), np.nan),
                    "motor_tp": np.full((k, agent.n_motors), np.nan),
                    "sensor_tp": np.full((k, environment.n_sensations), np.nan),
-                   "shift_tp": np.full((k, 2), np.nan)}
+                   "shift_tp": np.full((k, 2), np.nan),
+                   "grid_motor": np.full((agent.size_regular_grid, agent.n_motors), np.nan),
+                   "grid_pos": np.full((agent.size_regular_grid, 2), np.nan)}
 
+    # generate random transitions
     filled = 0
     while filled < k:
 
@@ -68,9 +71,12 @@ def generate_sensorimotor_data(agent, environment, explo_type, k, dir_data="data
         # update filled
         filled = filled + len(valid_indexes)
 
+    # get a regular grid of motor and position samples
+    transitions["grid_motor"], transitions["grid_pos"] = agent.generate_regular_sampling()
+
     # save the dictionary on disk
     filename = "dataset_{}.pkl".format(explo_type)
-    with open("/".join([dir_data, filename]), 'wb') as file:
+    with open("/".join([dest_data, filename]), 'wb') as file:
         pickle.dump(transitions, file)
 
     print("data generation finished")
@@ -91,12 +97,12 @@ if __name__ == "__main__":
 
     # create the agent and environment according to the type of exploration
     if type_simu == "gridexplorer":
-        agent = Agents.GridExplorer()
-        environment = Environments.GridWorld()
+        my_agent = Agents.GridExplorer()
+        my_environment = Environments.GridWorld()
 
     elif type_simu == "armroom":
-        agent = Agents.HingeArm()
-        environment = Environments.Room()
+        my_agent = Agents.HingeArm()
+        my_environment = Environments.Room()
 
     else:
         print("Error: invalid type of simulation")
@@ -112,8 +118,8 @@ if __name__ == "__main__":
         os.makedirs(dir_data)
 
     # run the three types of exploration: MTM, MM, MMT
-    generate_sensorimotor_data(agent, environment, "MTM", n_transitions, dir_data)
-    generate_sensorimotor_data(agent, environment, "MM", n_transitions, dir_data)
-    generate_sensorimotor_data(agent, environment, "MMT", n_transitions, dir_data)
+    generate_sensorimotor_data(my_agent, my_environment, "MTM", n_transitions, dir_data)
+    generate_sensorimotor_data(my_agent, my_environment, "MM", n_transitions, dir_data)
+    generate_sensorimotor_data(my_agent, my_environment, "MMT", n_transitions, dir_data)
 
     input("Press any key to exit the program.")

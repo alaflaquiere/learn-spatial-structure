@@ -38,6 +38,7 @@ class GridExplorer:
         self.n_motors = 3
         self.n_states = 5*5*5
         self.state2motor_mapping, self.state2pos_mapping = self.create_random_motor2pos_mapping()
+        self.size_regular_grid = self.n_states
 
     @staticmethod
     def create_random_motor2pos_mapping():
