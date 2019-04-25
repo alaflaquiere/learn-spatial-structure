@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-# TODO: rewrite the description
+# todo: rewrite the description
 """
 All agents have the following attributes and methods:
 - type

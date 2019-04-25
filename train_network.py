@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 def load_sensorimotor_transitions(data_directory, n_transitions=None):
     """
     Loads sensorimotor transitions from a file created by generate_sensorimotor_data.py.
-    TODO
+    todo
     """
 
     # check dir_data
@@ -55,7 +55,7 @@ def load_sensorimotor_transitions(data_directory, n_transitions=None):
 
 def normalize_data(data):
     """
-    TODO
+    todo
     We don't normalize the positions of the sensor, to keep the real scale.
     """
 
@@ -75,7 +75,7 @@ def normalize_data(data):
     #
     data["sensor_t"] = 2 * (data["sensor_t"] - sensor_min) / (sensor_max - sensor_min) - 1
     data["sensor_tp"] = 2 * (data["sensor_tp"] - sensor_min) / (sensor_max - sensor_min) - 1
-    #
+    # todo: get a warning when shift doesn't change
     data["shift_t"] = 2 * (data["shift_t"] - shift_min) / (shift_max - shift_min) - 1
     data["shift_tp"] = 2 * (data["shift_tp"] - shift_min) / (shift_max - shift_min) - 1
 
@@ -96,6 +96,7 @@ if __name__ == "__main__":
     parser.add_argument("-dh", "--dim_h", dest="dim_encoding", help="dimension of the motor encoding", default=3)
     parser.add_argument("-e", "--n_epochs", dest="n_epochs", help="number of epochs", type=int, default=int(1e5))
     parser.add_argument("-n", "--n_simulations", dest="n_simulations", help="number of independent simulations", type=int, default=10)
+    parser.add_argument("-v", "--visual", dest="display_progress", help="flag to turn the online display on or off", type=bool, default=True)
     parser.add_argument("-gpu", "--use_gpu", dest="use_gpu", help="flag to use the gpu", type=bool, default=False)
 
     # get arguments
@@ -105,6 +106,7 @@ if __name__ == "__main__":
     dim_encoding = args.dim_encoding
     n_simulations = args.n_simulations
     n_epochs = args.n_epochs
+    display_progress = args.display_progress
     use_gpu = args.use_gpu
 
     # load the data
@@ -144,7 +146,7 @@ if __name__ == "__main__":
         network = SensorimotorPredictiveNetwork(dim_motor=dim_m, dim_sensor=dim_s, dim_enc=dim_encoding, dest_model=dir_model_trial)
 
         # train the network
-        network.full_train(n_epochs=n_epochs, data=transitions)
+        network.full_train(n_epochs=n_epochs, data=transitions, disp=display_progress)
 
     input("Press any key to exit the program.")
 

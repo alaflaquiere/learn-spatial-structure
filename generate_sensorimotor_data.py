@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 
 def generate_sensorimotor_data(agent, environment, explo_type, k, dest_data="dataset"):
     """
-    TODO
+    todo
     """
 
     # check the inputs

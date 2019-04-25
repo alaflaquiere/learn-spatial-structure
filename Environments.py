@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# TODO: rewrite the description
+# todo: rewrite the description
 """
 The Environment is used to define the sensation associated with each position of the sensor.
 """
@@ -9,7 +9,7 @@ The Environment is used to define the sensation associated with each position of
 
 class GridWorld:
     """
-    TODO
+    todo
     """
 
     def __init__(self):
@@ -21,7 +21,7 @@ class GridWorld:
 
     def create_random_pos2sensation_mapping(self):
         """
-        TODO
+        todo
         """
 
         # scan all possible positions

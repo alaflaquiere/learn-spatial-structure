@@ -2,8 +2,11 @@ import os
 import time
 import tensorflow as tf
 import numpy as np
+import pickle
 from sklearn import linear_model
 from scipy.spatial.distance import pdist
+import platform
+import subprocess
 
 
 class MLP:
@@ -24,23 +27,23 @@ class MLP:
 
         self.type = "MLP"
 
-        # todo: check that reuse is not necessary
-
         current_input = input_net
         for layer_index, nbr_units in enumerate(layers_sizes[0:-1]):
             current_input = tf.layers.dense(inputs=current_input,
                                             units=nbr_units,
                                             activation=activation,
-                                            name="layer"+str(layer_index))  # , reuse=tf.AUTO_REUSE)
-        self.output = tf.layers.dense(inputs=current_input, units=layers_sizes[-1], activation=None, name='layerend')  # , reuse=tf.AUTO_REUSE)
+                                            name="layer"+str(layer_index))
+        self.output = tf.layers.dense(inputs=current_input, units=layers_sizes[-1], activation=None, name='layerend')
 
 
 class SensorimotorPredictiveNetwork:
-    """TODO"""
+    """
+    todo
+    """
 
     def __init__(self, dim_motor=3, dim_sensor=4, dim_enc=3, dest_model="model/trained_model"):
         """
-        TODO
+        todo
         """
 
         # set attributes
@@ -121,7 +124,7 @@ class SensorimotorPredictiveNetwork:
 
     def train(self, data, number_epochs=1):
         """
-        TODO
+        todo
         """
 
         # run the optimization for number_epochs iterations
@@ -140,12 +143,21 @@ class SensorimotorPredictiveNetwork:
 
         return current_epoch, current_loss
 
-    def full_train(self, n_epochs, data):
+    def full_train(self, n_epochs, data, disp):
         """
-        TODO
+        todo
         """
 
         print('training the network...')
+
+        # open the display process in parallel if necessary
+        if disp:
+            if platform.system() == 'Windows':
+                command = "python display_progress.py -f " + self.dest_model + "/display_progress/display_data.pkl"
+                display_proc = subprocess.Popen(command)
+            elif platform.system() == 'Linux':
+                command = "exec python display_progress.py -f " + self.dest_model + "/display_progress/display_data.pkl"
+                server_proc = subprocess.Popen([command], shell=True)
 
         # open a session
         with tf.Session() as self.sess:
@@ -158,7 +170,7 @@ class SensorimotorPredictiveNetwork:
             t0 = time.time()
 
             # initial evaluation of the network
-            fitted_p, metric_error, topo_error, encoding, prediction, sensation = self.compute_and_save_tracked_variables(data)
+            fitted_p, metric_error, topo_error, encoding, prediction, sensation = self.track_progress(data)
 
             print("({}s) epoch: {}, loss: _, metric error: {}, topo error: {}".format(time.time() - t0, epoch, metric_error, topo_error))
 
@@ -168,10 +180,10 @@ class SensorimotorPredictiveNetwork:
                 epoch, current_loss = self.train(data=data, number_epochs=1000)
 
                 # get tracked variables and send them to Tensorboard
-                fitted_p, metric_error, topo_error, encoding, prediction, sensation = self.compute_and_save_tracked_variables(data)
+                fitted_p, metric_error, topo_error, encoding, prediction, sensation = self.track_progress(data)
 
-                print("({}s) epoch: {}, loss: {}, metric error: {}, topo error: {}".format(time.time() - t0, epoch, current_loss,
-                                                                                           metric_error, topo_error))
+                print("({:.3f}s) epoch: {:6d}, loss: {:.2e}, metric error: {:.2e}, topo error: {:.2e}".format(time.time() - t0, epoch, current_loss,
+                                                                                                              metric_error, topo_error))
 
                 # save the network
                 self.save_network()
@@ -179,8 +191,11 @@ class SensorimotorPredictiveNetwork:
                 if current_loss is None:
                     break
 
+        # kill the display process
+        if disp:
+            display_proc.kill()
+
     def compute_weighted_affine_errors(self, target_set, origin_set, weight=0):
-        #TODO: put outside of the class as a simple function
         """
         Compute the affine transformation: target_set = origin_set * coef_ + intercept_
         Estimate the error between the metrics of target_set and of the projection of origin_set in the target_set space.
@@ -211,43 +226,61 @@ class SensorimotorPredictiveNetwork:
 
         return weighted_error, fitted
 
-    def compute_and_save_tracked_variables(self, data):
+    def track_progress(self, data):
         """
-        Computes and saves the variables tracked via Tensorboard.
-        TODO
+        Computes and saves the variables tracked via Tensorboard. + display figure
+        todo
         """
 
         # get the encoding of the regular motor sampling
         motor_encoding = self.sess.run(self.encode_module_t.output, feed_dict={self.motor_t: data["grid_motor"]})
 
         # compute the dissimilarities and affine projections
-        diss_p, fitted_p = self.compute_weighted_affine_errors(data["grid_pos"], motor_encoding, weight=0)
+        metric_err, fitted_p = self.compute_weighted_affine_errors(data["grid_pos"], motor_encoding, weight=0)
         topo_err, _ = self.compute_weighted_affine_errors(data["grid_pos"], motor_encoding, weight=10)
         #diss_h, fitted_h = self.compute_weighted_affine_errors(motor_encoding, ground_truth_positions, weight=0)
 
-        # get a random batch to evaluate the prediction error (without repeat significantly increases computation time)
+        # get a random batch to evaluate the prediction error (without replace significantly increases computation time)
         batch_indexes = np.random.choice(data["motor_t"].shape[0], self.batch_size, replace=True)
 
         # perform sensory prediction and process the summaries
-        curr_summaries, predicted_sensation, gt_sensation = self.sess.run([self.merged_summaries, self.prediction_module.output, self.sensor_tp],
-                                                                          feed_dict={self.motor_t: data["motor_t"][batch_indexes, :],
-                                                                                     self.sensor_t: data["sensor_t"][batch_indexes, :],
-                                                                                     self.motor_tp: data["motor_tp"][batch_indexes, :],
-                                                                                     self.sensor_tp: data["sensor_tp"][batch_indexes, :],
-                                                                                     self.dissimilarity_p: diss_p,
-                                                                                     #self.dissimilarity_h: diss_h,
-                                                                                     self.topology_error: topo_err})
+        curr_loss, curr_summaries, predicted_sensation, gt_sensation = self.sess.run([self.loss,
+                                                                                     self.merged_summaries,
+                                                                                     self.prediction_module.output,
+                                                                                     self.sensor_tp],
+                                                                                     feed_dict={self.motor_t: data["motor_t"][batch_indexes, :],
+                                                                                                self.sensor_t: data["sensor_t"][batch_indexes, :],
+                                                                                                self.motor_tp: data["motor_tp"][batch_indexes, :],
+                                                                                                self.sensor_tp: data["sensor_tp"][batch_indexes, :],
+                                                                                                self.dissimilarity_p: metric_err,
+                                                                                                #self.dissimilarity_h: diss_h,
+                                                                                                self.topology_error: topo_err})
 
         # save the summaries
         curr_epoch = self.sess.run(self.global_step)
         self.summaries_writer.add_summary(curr_summaries, curr_epoch)
 
-        #return fitted_p, fitted_h, motor_encoding, sensory_prediction, sensation
-        return fitted_p, diss_p, topo_err, motor_encoding, predicted_sensation, gt_sensation
+        # save the data to display by display_progress.py
+        display_dict = {"epoch": curr_epoch,
+                        "loss": curr_loss,
+                        "motor": data["grid_motor"],
+                        "gt_pos": data["grid_pos"],
+                        "encoded_motor": motor_encoding,
+                        "projected_encoding": fitted_p,
+                        "metric_error": metric_err,
+                        "topo_error": topo_err,
+                        "gt_sensation": gt_sensation,
+                        "predicted_sensation": predicted_sensation
+                        }
 
-    def save_points_to_display(self):
-        """TODO"""
-        pass
+        # write display_dict on the disk
+        if not os.path.exists(self.dest_model + "/display_progress"):
+            os.makedirs(self.dest_model + "/display_progress")
+        with open(self.dest_model + "/display_progress/display_data.pkl", "wb") as file:
+            pickle.dump(display_dict, file)
+
+        #return fitted_p, fitted_h, motor_encoding, sensory_prediction, sensation
+        return fitted_p, metric_err, topo_err, motor_encoding, predicted_sensation, gt_sensation
 
     def save_network(self):
         """
