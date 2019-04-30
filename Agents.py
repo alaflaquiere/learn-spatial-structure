@@ -1,17 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 
 
-# todo: rewrite the description
 """
-All agents have the following attributes and methods:
-- type
-- number_motors
-- generate_motor_and_get_position()
-- generate_regular_sampling()
-- save_log()
+Collection of agents that can be used by generate-sensorimotor-data.py.
+Agents are used to generate motor configurations and get the corresponding egocentric position of the sensor.
 
-The agent is only used to generated motor configurations and their corresponding egocentric sensor positions.
+Each agent has the following attributes and methods:
+
+    type: str
+        type of agent
+    n_motors : int
+        number of independent motor components
+    size_regular_grid: TODO
+        TODO
+        
+    generate_random_sampling(k):
+        randomly explores the motor space and return the motor samples and corresponding sensor egocentric positions
+    generate_regular_sampling():
+        returns a regular sampling of the motor space and the corresponding sensor egocentric positions
+    display(motor):
+        displays the agent's configuration associated with an input motor command
+    log(dir):
+        logs the agent's parameters
 """
 
 
@@ -31,6 +43,8 @@ class GridExplorer:
         mapping between the states and the motor configurations
     state2pos_mapping : nd.array of int of size (n_states, 2)
         mapping between the states and the sensor position (x, y) in [-2, 2]² in the grid
+    size_regular_grid:
+        todo
     """
 
     def __init__(self):
@@ -97,18 +111,111 @@ class GridExplorer:
         """
         return self.state2motor_mapping, self.state2pos_mapping
 
-    def get_state_from_motor(self, motor):
-        """
-        Get the state associated with the input motor state
-        """
-        state = [np.where(np.all(self.state2motor_mapping == motor[i, :], axis=1)) for i in range(len(motor))]
-        return state
-
     def display(self, motor):
         """
         Displays the position associated with a motor configuration
         """
         for i in range(motor.shape[0]):
-            state_index = self.get_state_from_motor(motor[i, :])
+            # get the state from the motor command
+            state_index = [np.where(np.all(self.state2motor_mapping == motor[i, :], axis=1)) for i in range(len(motor))]
             position = self.state2pos_mapping[state_index, :]
             plt.plot(position[i, 0], position[i, 1], 'xk')
+
+    def log(self, dest_log):
+        """
+        Writes the agent's attributes to the disk.
+        """
+
+        serializable_dict = self.__dict__.copy()
+        for key, value in serializable_dict.items():
+            if type(value) is np.ndarray:
+                serializable_dict[key] = value.tolist()
+
+        with open(dest_log, "w") as file:
+            json.dump(serializable_dict, file, indent=1)
+
+
+class HingeArm:
+    """
+    todo
+    the orientation is not taken into account
+    """
+
+    def __init__(self):
+        self.type = "HingeArm"
+        self.n_motors = 3
+        self.motor_amplitude = np.pi
+        self.segments_length = [12, 12, 12]  # the arm covers a working space of radius 36 in an environment of size size 150
+        self.size_regular_grid = 6
+
+    def get_position_from_motor(self, motor):
+        """
+        Get the coordinates of the sensor via trigonometry.
+        """
+        x = np.sum(np.multiply(self.segments_length, np.cos(np.cumsum(self.motor_amplitude * motor, axis=1))), axis=1, keepdims=True)
+        y = np.sum(np.multiply(self.segments_length, np.sin(np.cumsum(self.motor_amplitude * motor, axis=1))), axis=1, keepdims=True)
+        return np.hstack((x, y))
+
+    def generate_random_sampling(self, k=1):
+        """
+        Draw a set of k randomly selected motor configurations and associated egocentric sensor positions
+
+        Returns:
+            motor - (k, 3) array
+            position - (k, 2) array
+        """
+
+        # draw random motor components in [-1,1]
+        motor = 2 * np.random.rand(k, self.n_motors) - 1
+
+        # get the associated egocentric positions in [-36, 36]
+        position = self.get_position_from_motor(motor)
+
+        return motor, position
+
+    def generate_regular_sampling(self):
+        """
+        todo
+        """
+
+        xx, yy, zz = np.meshgrid(np.linspace(-1, 1, self.size_regular_grid),
+                                 np.linspace(-1, 1, self.size_regular_grid),
+                                 np.linspace(-1, 1, self.size_regular_grid))
+        motor_grid = np.hstack((xx.reshape(-1, 1), yy.reshape(-1, 1), zz.reshape(-1, 1)))
+
+        pos_grid = self.get_position_from_motor(motor_grid)
+
+        return motor_grid, pos_grid
+
+    def display(self, motor):
+        """
+        Displays the position associated with a motor configuration
+        """
+
+        # get the joints positions
+        x = np.cumsum(np.multiply(self.segments_length, np.cos(np.cumsum(self.motor_amplitude * motor, axis=1))), axis=1, keepdims=True)
+        y = np.cumsum(np.multiply(self.segments_length, np.sin(np.cumsum(self.motor_amplitude * motor, axis=1))), axis=1, keepdims=True)
+
+        # add the agent's base
+        x = np.hstack((np.zeros((x.shape[0], 1)), x))
+        y = np.hstack((np.zeros((y.shape[0], 1)), y))
+
+        # unify the cases where motor is a unique inout or multiple inputs
+        motor = motor.reshape((-1, self.n_motors))
+
+        # display the different motor configurations
+        for i in range(motor.shape[0]):
+            plt.plot(x[i, :, 0], y[i, :, 1], '-ok')
+
+    def log(self, dest_log):
+        """
+        Writes the agent's attributes to the disk.
+        """
+
+        serializable_dict = self.__dict__.copy()
+        for key, value in serializable_dict.items():
+            if type(value) is np.ndarray:
+                serializable_dict[key] = value.tolist()
+
+        with open(dest_log, "w") as file:
+            json.dump(serializable_dict, file, indent=1)

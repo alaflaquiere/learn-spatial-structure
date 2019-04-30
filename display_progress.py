@@ -19,13 +19,19 @@ def display(file):
     # interactive mode
     plt.ion()
 
+    # wait for the file to be created
+    while True:
+        if os.path.exists(file):
+            break
+        plt.pause(5)
+
     while True:
 
         # load the data
         with open(file, 'rb') as f:
             try:
                 data = pickle.load(f)
-            except (FileNotFoundError, IOError) as e:
+            except (FileNotFoundError, IOError):
                 plt.pause(5)
                 continue
 
@@ -37,9 +43,7 @@ def display(file):
         # (re)open the figure if necessary
         if not plt.fignum_exists(1):
 
-            fig = plt.figure(num=1, figsize=(18, 5))
-
-            plt.suptitle(file + " - epoch: " + str(data["epoch"]), fontsize=14)
+            fig = plt.figure(num=1, figsize=(16, 5))
 
             # create the axis for the motor space
             if dim_motor in (1, 2):
@@ -61,6 +65,9 @@ def display(file):
                 ax4 = plt.subplot(144)
             else:
                 ax4 = plt.subplot(144, projection='3d')
+
+        # display the updated title
+        plt.suptitle(file + " - epoch: " + str(data["epoch"]), fontsize=14)
 
         # plot the motor configurations
         ax1.cla()
