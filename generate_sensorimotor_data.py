@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import sys
+import shutil
 import Agents
 import Environments
 import pickle
@@ -97,6 +98,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-n", "--n_transitions", dest="n_transitions", help="number of transitions", type=int, default=int(3e6))
     parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation", choices=["gridexplorer", "armroom"])
+    parser.add_argument("-r", "--n_runs", dest="n_runs", help="number of independent datasets generated", type=int, default=10)
     parser.add_argument("-d", "--dir_data", dest="dir_data", help="directory where to save the data", default="dataset/grid_explorer")
     parser.add_argument("-v", "--visual", dest="display_exploration", help="flag to turn the online display on or off", action="store_true")
 
@@ -104,48 +106,66 @@ if __name__ == "__main__":
     args = parser.parse_args()
     n_transitions = args.n_transitions
     type_simu = args.type_simu
+    n_runs = args.n_runs
     dir_data = args.dir_data
     display_exploration = args.display_exploration
-
-    # create the agent and environment according to the type of exploration
-    if type_simu == "gridexplorer":
-        my_agent = Agents.GridExplorer()
-        my_environment = Environments.GridWorld()
-
-    elif type_simu == "armroom":
-        my_agent = Agents.HingeArm()
-        validated = False
-        while not validated:
-            my_environment = Environments.Room()
-            my_environment.display()
-            ans = input("> redraw a different environment? [y, n]: ")
-            if ans is "n":
-                validated = True
-
-    else:
-        print("Error: invalid type of simulation")
-        sys.exit()
 
     # check dir_data
     if os.path.exists(dir_data):
         ans = input("> WARNING: The folder {} already exists; do you want to overwrite its content? [y,n]: ".format(dir_data))
+        if ans is "y":
+            shutil.rmtree(dir_data)
         if ans is not "y":
             print("exiting the program")
             sys.exit()
     else:
         os.makedirs(dir_data)
 
-    # save the agent and environment parameters
-    my_agent.log(dir_data + "/agent_params.txt")
-    my_environment.log(dir_data + "/environment_params.txt")
+    # iterate over the runs
+    for trial in range(n_runs):
 
-    # create and save a unique identifier for the dataset
-    with open(dir_data + "/uuid.txt", "w") as file:
-        file.write(uuid.uuid4().hex)
+        print("################ ENVIRONMENT {} ################".format(trial))
 
-    # run the three types of exploration: MEM, MM, MME
-    generate_sensorimotor_data(my_agent, my_environment, "MEM", n_transitions, dir_data, disp=display_exploration)
-    generate_sensorimotor_data(my_agent, my_environment, "MM" , n_transitions, dir_data, disp=display_exploration)
-    generate_sensorimotor_data(my_agent, my_environment, "MME", n_transitions, dir_data, disp=display_exploration)
+        # create the trial subdirectory
+        dir_data_trial = "/".join([dir_data, str(trial)])
+        if not os.path.exists(dir_data_trial):
+            os.makedirs(dir_data_trial)
+
+        # create the agent and environment according to the type of exploration
+        if type_simu == "gridexplorer":
+            my_agent = Agents.GridExplorer()
+            my_environment = Environments.GridWorld()
+
+        elif type_simu == "armroom":
+            my_agent = Agents.HingeArm()
+
+            # if a single run is asked, the user has the freedom to select the environment
+            if n_runs == 1:
+                validated = False
+                while not validated:
+                    my_environment = Environments.Room()
+                    my_environment.display()
+                    ans = input("> redraw a different environment? [y, n]: ")
+                    if ans is "n":
+                        validated = True
+            else:
+                my_environment = Environments.Room()
+
+        else:
+            print("Error: invalid type of simulation")
+            sys.exit()
+
+        # save the agent and environment parameters
+        my_agent.log(dir_data_trial + "/agent_params.txt")
+        my_environment.log(dir_data_trial + "/environment_params.txt")
+
+        # create and save a unique identifier for the dataset
+        with open(dir_data_trial + "/uuid.txt", "w") as file:
+            file.write(uuid.uuid4().hex)
+
+        # run the three types of exploration: MEM, MM, MME
+        generate_sensorimotor_data(my_agent, my_environment, "MEM", n_transitions, dir_data_trial, disp=display_exploration)
+        generate_sensorimotor_data(my_agent, my_environment, "MM" , n_transitions, dir_data_trial, disp=display_exploration)
+        generate_sensorimotor_data(my_agent, my_environment, "MME", n_transitions, dir_data_trial, disp=display_exploration)
 
     input("Press any key to exit the program.")

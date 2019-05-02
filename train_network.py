@@ -86,7 +86,7 @@ if __name__ == "__main__":
     """
 
     # todo: add required or not
-    # todo put flags as actual flags with store_true (in other scipts too)
+    # todo put flags as actual flags with store_true (in other scripts too)
 
     parser = ArgumentParser()
     parser.add_argument("-dd", "--dir_data", dest="dir_data", help="path to the data")
@@ -123,7 +123,7 @@ if __name__ == "__main__":
         ans = input("> WARNING: The folder {} already exists; do you want to overwrite its content? [y,n]: ".format(dir_model))
         if ans is "y":
             shutil.rmtree(dir_model)
-        if ans is not "y":
+        else:
             print("exiting the program")
             sys.exit()
     else:

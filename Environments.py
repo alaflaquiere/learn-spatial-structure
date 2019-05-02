@@ -149,15 +149,15 @@ class Room:
     todo
     """
 
-    def __init__(self):
+    def __init__(self, n_obstacles=15):
         """
         todo
         """
-        # todo: move the display option to the get_sensation_at_position() method
 
         self.type = "Room"
         self.n_sensations = 10
         self.env_size = (150, 150)
+        self.n_obstacles = n_obstacles
 
         self.agent_parameters = {
             'radius': 5,
@@ -211,7 +211,7 @@ class Room:
         }
 
         # create objects
-        for i in range(15):
+        for i in range(n_obstacles):
 
             if np.random.random() < 0.5:
 
@@ -267,7 +267,6 @@ class Room:
             self.flatland_env.agent.body.position = (position[i, 0], position[i, 1])
 
             # get the sensation at that position
-            # TODO: DISPLAY SENSOR if display=True
             sens, _, _, _ = self.flatland_env.step(actions, display)
 
             # check if there's been a collision
@@ -310,5 +309,17 @@ class Room:
         """
         Writes the environment's attributes to the disk.
         """
-        # todo, not functional yet
-        pass
+
+        serializable_dict = self.__dict__.copy()
+        for key, value in self.__dict__.items():
+
+            # keep only the ints, tuples, lists, and ndarrays
+            if type(value) not in (int, tuple, list, np.ndarray):
+                del serializable_dict[key]
+                continue
+            # make the ndarrays serializable
+            if type(value) is np.ndarray:
+                serializable_dict[key] = value.tolist()
+
+        with open(dest_log, "w") as file:
+            json.dump(serializable_dict, file, indent=1)

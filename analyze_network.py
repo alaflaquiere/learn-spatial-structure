@@ -5,8 +5,6 @@ import glob
 import numpy as np
 from argparse import ArgumentParser
 
-# todo: change MTM en MEM etc... dans tout le projet
-
 
 def read_and_display_results(dir_exp, label, color="r", fig=None):
 

@@ -31,7 +31,7 @@ def display(file):
         with open(file, 'rb') as f:
             try:
                 data = pickle.load(f)
-            except (FileNotFoundError, IOError):
+            except (FileNotFoundError, IOError, EOFError):
                 plt.pause(5)
                 continue
 
