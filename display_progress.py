@@ -28,12 +28,16 @@ def display(file):
     while True:
 
         # load the data
-        with open(file, 'rb') as f:
-            try:
-                data = pickle.load(f)
-            except (FileNotFoundError, IOError, EOFError):
-                plt.pause(5)
-                continue
+        try:
+            with open(file, 'rb') as f:
+                try:
+                    data = pickle.load(f)
+                except (IOError, EOFError):
+                    plt.pause(5)
+                    continue
+        except FileNotFoundError:
+            plt.pause(5)
+            continue
 
         # get useful dimensions
         dim_motor = data["motor"].shape[1]

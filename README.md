@@ -91,6 +91,7 @@ To train a network on this dataset and save the model in ./model/experiment0, us
 ```
 python3 train_network.py -dd dataset/explo0 -dm model/experiment0 -v -mem -mm -mme
 ```
+TODO: ADD TENSORBOARD
 
 To analyze the results of the training, use:
 ```
