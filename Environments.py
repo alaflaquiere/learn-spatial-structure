@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+from tqdm import tqdm
 from flatland.env import Env
+import gqn_renderer as gqn
+import gqn_renderer.tools as tools
 
 """
 Collection of environments that can be used by generate-sensorimotor-data.py.
@@ -32,6 +35,19 @@ class GridWorld:
     """
     Tore gridworld of size (10, 10) with a sensory input of dimension 4 at each position of the grid.
     Each sensory component is generating using a random smooth periodic function of period 10 in both x and y in the grid.
+
+    Attributes
+    ----------
+    type : str
+        type of the environment
+    tore : bool
+        make the grid behave like a tore or not
+    n_sensations : int
+        number of independent sensory components
+    env_size : list/tuple of 2 values
+        size of the environment
+    pos2value_mapping : ndarray
+        mapping from position to sensations
     """
 
     def __init__(self):
@@ -44,7 +60,7 @@ class GridWorld:
     def create_random_pos2sensation_mapping(self):
         """
         Generates a random smooth periodic function of period 10 in both x and y in the grid. Each function associated with one of
-        the four sensory components is the composition of 3 random cosinus varying along x and 3 random cosinus varying along y.
+        the four sensory components is the composition of 3 random cosine varying along x and 3 random cosine varying along y.
 
         Return a mapping as an array of size (n_positions_in_the_grid, 4).
         """
@@ -82,6 +98,9 @@ class GridWorld:
             sensations - (N, 4) array
         """
 
+        # deal with the case of a single position
+        position = position.reshape(-1, 2)
+
         if self.tore:  # warp the grid
 
             position[:, 0] = position[:, 0] % self.env_size[0]
@@ -97,8 +116,13 @@ class GridWorld:
             sensations[valid_index, :] = self.pos2value_mapping[position[valid_index, 0], position[valid_index, 1]]
 
         if display:
-            # todo: display it live
-            pass
+            fig = plt.figure(figsize=(4, 4))
+            ax = fig.add_subplot(1, 1, 1)
+            for i in range(position.shape[0]):
+                ax.cla()
+                ax.imshow(sensations[i, :], interpolation="none")
+                plt.pause(1e-8)
+            plt.close(fig)
 
         return sensations
 
@@ -144,18 +168,33 @@ class GridWorld:
             json.dump(serializable_dict, file, indent=1)
 
 
-class Room:
+class FlatRoom:
     """
-    todo
+    A 2D room of size (150,150) randomly filled with random obstacles. The position (0,0) corresponds to the bottom left of the room.
+    At each position, the environment generates a sensory input corresponding to the reading of a distance sensor array with a fixed orientation.
+
+    Attributes
+    ----------
+    type : str
+        type of the environment
+    n_sensations : int
+        number of independent sensory components
+    env_size : list/tuple of 2 values
+        size of the environment
+    n_obstacles : int
+        number of obstacles in the environment
+    agent_parameters : dict
+        agent parameters for the simulation
+    game_parameters : dict
+        simulation parameters
+    flatland_env : flatland environment
+        instance of the simulation
     """
 
-    def __init__(self, n_obstacles=15):
-        """
-        todo
-        """
+    def __init__(self, n_obstacles=15, n_sensations=10):
 
-        self.type = "Room"
-        self.n_sensations = 10
+        self.type = "FlatRoom"
+        self.n_sensations = n_sensations
         self.env_size = (150, 150)
         self.n_obstacles = n_obstacles
 
@@ -246,7 +285,13 @@ class Room:
 
     def get_sensation_at_position(self, position, display=False):
         """
-        todo
+        Returns the sensations at a given set of input positions.
+
+        Inputs:
+            position - (N, 2) array
+
+        Returns:
+            sensations - (self.n_sensations, 4) array
         """
 
         # deal with the case of a single position
@@ -292,9 +337,11 @@ class Room:
         return shift
 
     def display(self):
+        """
+        Display the simulated environment with the agent at the center.
+        """
 
-        # deal with the case of a single position
-        position = [75, 75]
+        position = [75, 75]  # the agent is put in the center
 
         # define a null action
         actions = {'longitudinal_velocity': 0, 'lateral_velocity': 0, 'angular_velocity': 0, 'head_angle': 0}
@@ -307,7 +354,7 @@ class Room:
 
     def log(self, dest_log):
         """
-        Writes the environment's attributes to the disk.
+        Writes some environment's attributes to the disk.
         """
 
         serializable_dict = self.__dict__.copy()
@@ -315,6 +362,174 @@ class Room:
 
             # keep only the ints, tuples, lists, and ndarrays
             if type(value) not in (int, tuple, list, np.ndarray):
+                del serializable_dict[key]
+                continue
+            # make the ndarrays serializable
+            if type(value) is np.ndarray:
+                serializable_dict[key] = value.tolist()
+
+        with open(dest_log, "w") as file:
+            json.dump(serializable_dict, file, indent=1)
+
+
+class GQNRoom:
+    """
+    A 3D room of size (7,7) randomly filled with random objects. The position (0,0) corresponds to the center of the room.
+    At each position, the environment generates a sensory input corresponding to the reading of a RGB camera with a fixed orientation.
+
+    Attributes
+    ----------
+    type : str
+        type of the environment
+    n_sensations : int
+        number of independent sensory components
+    env_size : list/tuple of 2 values
+        size of the environment
+    n_obstacles : int
+        number of obstacles in the environment
+    scene : simulated environment
+        instance of the simulation
+    """
+
+    def __init__(self, n_obstacles=7):
+
+        self.type = "GQNRoom"
+        self.n_sensations = 16 * 16 * 3
+        self.env_size = (7, 7)
+        self.n_obstacles = n_obstacles
+
+        # generate basic colors
+        colors = tools.get_colors()
+
+        # create the environment
+        self.scene = tools.build_scene(fix_light_position=True)
+
+        # create the objects
+        tools.place_objects(self.scene, colors,
+                                min_num_objects=self.n_obstacles,
+                                max_num_objects=self.n_obstacles,
+                                discrete_position=False,
+                                rotate_object=False)
+
+    def get_sensation_at_position(self, position, display=False):
+        """
+        Returns the sensations at a given set of input positions.
+
+        Inputs:
+            position - (N, 2) array
+
+        Returns:
+            sensations - (self.n_sensations, 4) array
+        """
+
+        # deal with the case of a single position
+        position = position.reshape(-1, 2)
+
+        # prepare variable
+        sensations = np.full((position.shape[0], self.n_sensations), np.nan)
+
+        # create the camera
+        perspective_camera = gqn.pyrender.PerspectiveCamera(yfov=np.pi / 4)
+        perspective_camera_node = gqn.pyrender.Node(camera=perspective_camera, translation=np.array([0, 1, 1]))
+
+        # create the renderer
+        renderer = gqn.pyrender.OffscreenRenderer(viewport_width=16, viewport_height=16)
+
+        if display:
+            fig = plt.figure(figsize=(4, 4))
+            ax = fig.add_subplot(1, 1, 1)
+
+        for i in tqdm(range(position.shape[0])):
+
+            # add the camera in the environment
+            self.scene.add_node(perspective_camera_node)
+
+            # set the camera position
+            camera_position = [position[i, 0], 1.2, position[i, 1]]
+            perspective_camera_node.translation = camera_position
+
+            # set the camera orientation
+            camera_direction = np.array([5, 1.8, 0])
+            yaw, pitch = tools.compute_yaw_and_pitch(camera_direction)
+            perspective_camera_node.rotation = tools.generate_camera_quaternion(yaw, pitch)
+
+            # render
+            image = renderer.render(self.scene, flags=gqn.pyrender.RenderFlags.SHADOWS_DIRECTIONAL)[0]
+
+            # save sensation
+            sensations[i, :] = image.reshape(-1)
+
+            # clean the axis and display the image
+            if display:
+                ax.cla()
+                ax.imshow(image, interpolation="none")
+                plt.pause(1e-8)
+
+            # remove the camera
+            self.scene.remove_node(perspective_camera_node)
+
+        if display:
+            plt.close(fig)
+
+        return sensations
+
+    def generate_shift(self, k=1, static=False):
+        """
+        Returns k random shifts for the environment in [-1.75, 1.75]^2.
+        If static=True, returns the default shift which is [0, 0].
+        """
+        if static:
+            shift = np.zeros((k, 2))
+        else:
+            shift = np.array(self.env_size)/2 * np.random.rand(k, 2) - np.array(self.env_size)/4
+        return shift
+
+    def display(self, position=[8, 4.1, 0]):
+
+        # create the camera
+        perspective_camera = gqn.pyrender.PerspectiveCamera(yfov=np.pi / 4)
+        perspective_camera_node = gqn.pyrender.Node(camera=perspective_camera, translation=np.array([0, 1, 1]))
+
+        # create the renderer
+        renderer = gqn.pyrender.OffscreenRenderer(viewport_width=16, viewport_height=16)
+
+        fig = plt.figure(figsize=(4, 4))
+        ax = fig.add_subplot(1, 1, 1)
+        plt.tight_layout()
+
+        # add the camera in the environment
+        self.scene.add_node(perspective_camera_node)
+
+        # set the camera position
+        camera_position = position
+        perspective_camera_node.translation = camera_position
+
+        # set the camera orientation
+        camera_direction = np.array([5, 1.8, 0])
+        yaw, pitch = tools.compute_yaw_and_pitch(camera_direction)
+        perspective_camera_node.rotation = tools.generate_camera_quaternion(yaw, pitch)
+
+        # render
+        image = renderer.render(self.scene, flags=gqn.pyrender.RenderFlags.SHADOWS_DIRECTIONAL)[0]
+
+        # remove the camera
+        self.scene.remove_node(perspective_camera_node)
+
+        # clean the axis and display the image
+        ax.cla()
+        ax.imshow(image, interpolation="none")
+        plt.pause(1e-8)
+
+    def log(self, dest_log):
+        """
+        Writes the environment's attributes to the disk.
+        """
+
+        serializable_dict = self.__dict__.copy()
+        for key, value in self.__dict__.items():
+
+            # keep only the ints, tuples, lists, and ndarrays
+            if type(value) not in (str, int, tuple, list, np.ndarray):
                 del serializable_dict[key]
                 continue
             # make the ndarrays serializable

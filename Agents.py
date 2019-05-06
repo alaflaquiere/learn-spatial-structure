@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
+# TODO: add a save() method to pickle the envs and agents to the disk
 
 """
 Collection of agents that can be used by generate-sensorimotor-data.py.
@@ -29,22 +30,22 @@ Each agent has the following attributes and methods:
 
 class GridExplorer:
     """
-    A discrete agent that can move its sensor in a 5x5 grid using a non-linear redundant mapping from 3 motors to positions n the 2D grid.
+    A ``discrete'' agent that can move its sensor in a 5x5 grid using a non-linear redundant mapping from 3 motors to positions in the 2D grid.
 
     Attributes
     ----------
-    type: str
+    type : str
         type of the agent
     n_motors : int
         number of independent motor components, each motor is in [-1, 1]
-    n_states : int
+    n_states: int
         number of possible motor states
     state2motor_mapping : nd.array of float of size (n_states, n_motors)
         mapping between the states and the motor configurations
     state2pos_mapping : nd.array of int of size (n_states, 2)
         mapping between the states and the sensor position (x, y) in [-2, 2]² in the grid
-    size_regular_grid:
-        todo
+    size_regular_grid : int
+        resolution of the regular grid of motor configurations used for evaluation
     """
 
     def __init__(self):
@@ -137,15 +138,29 @@ class GridExplorer:
 
 class HingeArm:
     """
-    todo
-    the orientation is not taken into account
+    A three-segment arm with hinge joints that can move its end-effector in a 2D space.
+    The arm has three segments of size 12 and covers a working space of radius 36.
+    Note that only the position of the end-effector is considered; its orientation is not computed.
+
+    Attributes
+    ----------
+    type : str
+        type of the agent
+    n_motors : int
+        number of independent motor components; each motor is in [-1, 1], which maps to [-2*self.motor_amplitude, 2*self.motor_amplitude]
+    motor_amplitude : float
+        scale by which the motor components are multiplied
+    segments_length : list/tuple of 3 float/int
+        lengths of the arm segments
+    size_regular_grid: int
+        resolution of the regular grid of motor configurations used for evaluation
     """
 
-    def __init__(self):
+    def __init__(self, segments_length=(12, 12, 12)):
         self.type = "HingeArm"
         self.n_motors = 3
         self.motor_amplitude = np.pi
-        self.segments_length = [12, 12, 12]  # the arm covers a working space of radius 36 in an environment of size size 150
+        self.segments_length = segments_length  # the arm covers a working space of radius 36 in an environment of size size 150
         self.size_regular_grid = 6
 
     def get_position_from_motor(self, motor):
@@ -175,7 +190,7 @@ class HingeArm:
 
     def generate_regular_sampling(self):
         """
-        todo
+        Generates a regular grid of motor configurations in the motor space.
         """
 
         xx, yy, zz = np.meshgrid(np.linspace(-1, 1, self.size_regular_grid),

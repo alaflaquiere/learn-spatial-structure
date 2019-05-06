@@ -1,4 +1,3 @@
-# TODO: replace by import of all sensors
 from flatland.sensors.bump_sensor import BumpSensor
 from flatland.sensors.proximity_sensor import ProximitySensor
 from flatland.sensors.touch_sensor import TouchSensor
@@ -60,8 +59,6 @@ class Agent(Entity):
             sensor_class = sensor_classes[sensor_dict['typeSensor']]
             sensor_parameters = sensor_dict
             self.sensors.append(sensor_class(**sensor_parameters))
-
-        #### TODO: refactor and give name : maxRotationSpeed, maxTranslationSpeed, ...
 
         # Define the speed
         self.speed = kwargs['speed']

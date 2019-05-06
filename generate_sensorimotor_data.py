@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     parser = ArgumentParser()
     parser.add_argument("-n", "--n_transitions", dest="n_transitions", help="number of transitions", type=int, default=int(3e6))
-    parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation", choices=["gridexplorer", "armroom"])
+    parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation", choices=["gridexplorer", "armflatroom", "armgqnroom"])
     parser.add_argument("-r", "--n_runs", dest="n_runs", help="number of independent datasets generated", type=int, default=10)
     parser.add_argument("-d", "--dir_data", dest="dir_data", help="directory where to save the data", default="dataset/grid_explorer")
     parser.add_argument("-v", "--visual", dest="display_exploration", help="flag to turn the online display on or off", action="store_true")
@@ -136,20 +136,24 @@ if __name__ == "__main__":
             my_agent = Agents.GridExplorer()
             my_environment = Environments.GridWorld()
 
-        elif type_simu == "armroom":
-            my_agent = Agents.HingeArm()
+        elif type_simu == "armflatroom":
+            my_agent = Agents.HingeArm(segments_length=[12, 12, 12])  # working space of radius 36 in an environment of size size 150
 
             # if a single run is asked, the user has the freedom to select the environment
             if n_runs == 1:
                 validated = False
                 while not validated:
-                    my_environment = Environments.Room()
+                    my_environment = Environments.FlatRoom()
                     my_environment.display()
                     ans = input("> redraw a different environment? [y, n]: ")
                     if ans is "n":
                         validated = True
             else:
-                my_environment = Environments.Room()
+                my_environment = Environments.FlatRoom()
+
+        elif type_simu == "armgqnroom":
+            my_agent = Agents.HingeArm(segments_length=[0.5, 0.5, 0.5])  # working space of radius 1.5 in an environment of size size 7
+            my_environment = Environments.GQNRoom()
 
         else:
             print("Error: invalid type of simulation")
@@ -169,3 +173,8 @@ if __name__ == "__main__":
         generate_sensorimotor_data(my_agent, my_environment, "MME", n_transitions, dir_data_trial, disp=display_exploration)
 
     input("Press any key to exit the program.")
+
+    # TODO: add time during generation of data
+    # TODO: remove ²
+    # TODO: tqdm everywhere
+    # TODO: put the singleenv datasets into a /0/ folder

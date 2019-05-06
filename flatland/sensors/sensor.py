@@ -20,10 +20,7 @@ class Sensor(ABC):
 
     def __init__(self, **kwargs):
         self.display = kwargs['display']
-        
-        # TODO: add tests and default cases
-        # TODO: refactor names
-        
+
         # Sensor name and type to access it and compute sensors.
         self.nameSensor =  kwargs['nameSensor'] if 'nameSensor' in kwargs else None
         self.typeSensor =  kwargs['typeSensor'] if 'typeSensor' in kwargs else None
@@ -34,7 +31,6 @@ class Sensor(ABC):
         self.fovAngle = kwargs['fovAngle'] if 'fovAngle' in kwargs else None
         
         # Anchor of the sensor
-        # TODO: for now, attach to body.but should be able to attach to head, etc.
         self.bodyAnchor = kwargs['bodyAnchor'] if 'bodyAnchor' in kwargs else None
         # Relative location (polar) and angle wrt body
         self.d_r = kwargs['d_r'] if 'd_r' in kwargs else None
@@ -54,8 +50,6 @@ class Sensor(ABC):
     def update_display(self, env, array):
         pass
 
-
-    #TODO: Kiiiiillll meeeee. Reeeemoooove meeee.
     @abstractmethod
     def shape(self, env):
         pass

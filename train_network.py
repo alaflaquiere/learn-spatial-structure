@@ -147,6 +147,8 @@ if __name__ == "__main__":
     # run the training on the different types of data
     for simu_type in simu_types:
 
+        # TODO: adapt to multiple environments
+
         # get the correct file name
         filename = "{}/dataset_{}.pkl".format(dir_data, simu_type)
 

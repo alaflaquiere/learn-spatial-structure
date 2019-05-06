@@ -140,7 +140,7 @@ class Env(object):
         self.drawEnvironment()
         
         # Get top view image of environment
-        ##### TODO : Chhaaaaanggeeee  meeee! Something faaasteeeer!
+        # remark: very slow
         data = pygame.image.tostring(self.screen, 'RGB')
         pil_image = Image.frombytes('RGB', (self.width, self.height), data)
         image = np.asarray(pil_image.convert('RGB'))
