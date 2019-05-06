@@ -120,7 +120,7 @@ class GridWorld:
             ax = fig.add_subplot(1, 1, 1)
             for i in tqdm(range(position.shape[0]), desc="GridWorld", mininterval=1):
                 ax.cla()
-                ax.imshow(sensations[i, :], interpolation="none")
+                ax.imshow(sensations[[i], :], interpolation="none")
                 plt.pause(1e-8)
             plt.close(fig)
 
@@ -370,6 +370,7 @@ class FlatRoom:
 
 
 class GQNRoom:
+    # todo: mention the original code somewhere
     """
     A 3D room of size (7,7) randomly filled with random objects. The position (0,0) corresponds to the center of the room.
     At each position, the environment generates a sensory input corresponding to the reading of a RGB camera with a fixed orientation.

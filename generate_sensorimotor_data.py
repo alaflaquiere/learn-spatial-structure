@@ -9,6 +9,8 @@ from argparse import ArgumentParser
 import uuid
 
 
+# todo: check what is missing in the local/venv pyrender
+
 def generate_sensorimotor_data(agent, environment, explo_type, k, dest_data="dataset", disp=True):
     """
     Generates a sensorimotor dataset and save it in <dest_data>/dataset_<explo_type>.pkl.

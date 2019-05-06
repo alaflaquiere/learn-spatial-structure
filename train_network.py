@@ -168,8 +168,9 @@ if __name__ == "__main__":
 
             print("################ {} DATA - TRIAL {} ################".format(simu_type, trial))
 
-            # get the correct file name
-            filename = "{}/dataset{}/dataset_{}.pkl".format(dir_data, trial % n_simulations, simu_type)
+            # get the correct folder and file name
+            sub_dir_data = "{}/dataset{}".format(dir_data, trial % n_simulations)
+            filename = "{}/dataset_{}.pkl".format(sub_dir_data, simu_type)
 
             # load the data
             transitions = load_sensorimotor_transitions(filename)
@@ -191,10 +192,10 @@ if __name__ == "__main__":
             network.log(dir_model_trial + "/network_params.txt")
 
             # get and save the uuid of the training dataset
-            with open(dir_data + "/uuid.txt", "r") as file:
+            with open(sub_dir_data + "/uuid.txt", "r") as file:
                 dataset_uuid = file.read()
             with open(dir_model_trial + "/training_dataset_uuid.txt", "w") as file:
-                file.write("{} - {}".format(dir_data, dataset_uuid))
+                file.write("{} - {}".format(sub_dir_data, dataset_uuid))
 
             # train the network
             network.full_train(n_epochs=n_epochs, data=transitions, disp=display_progress)
