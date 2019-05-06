@@ -112,7 +112,8 @@ def test_sensory_prediction():
 if __name__ == "__main__":
 
     parser = ArgumentParser()
-    parser.add_argument("-d", "--dir", dest="dir_experiment", help="path the the folder of the experiment", default="model/trained_model")
+    parser.add_argument("-d", "--dir", dest="dir_experiment", help="path the the folder of the experiment", default="model/trained_model",
+                        required=True)
 
     args = parser.parse_args()
     dir_experiment = args.dir_experiment

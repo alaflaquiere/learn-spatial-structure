@@ -118,7 +118,7 @@ class GridWorld:
         if display:
             fig = plt.figure(figsize=(4, 4))
             ax = fig.add_subplot(1, 1, 1)
-            for i in range(position.shape[0]):
+            for i in tqdm(range(position.shape[0]), desc="GridWorld", mininterval=1):
                 ax.cla()
                 ax.imshow(sensations[i, :], interpolation="none")
                 plt.pause(1e-8)
@@ -303,10 +303,7 @@ class FlatRoom:
         # define a null action
         actions = {'longitudinal_velocity': 0, 'lateral_velocity': 0, 'angular_velocity': 0, 'head_angle': 0}
 
-        for i in range(position.shape[0]):
-
-            if i % max(1, position.shape[0] // 100) == 0:
-                print("\rsampling {} positions: {:3.0f}%".format(position.shape[0], (i + 1) / position.shape[0] * 100), end="")
+        for i in tqdm(range(position.shape[0]), desc="FlatRoom", mininterval=1):
 
             # set the agent position
             self.flatland_env.agent.body.position = (position[i, 0], position[i, 1])
@@ -439,7 +436,7 @@ class GQNRoom:
             fig = plt.figure(figsize=(4, 4))
             ax = fig.add_subplot(1, 1, 1)
 
-        for i in tqdm(range(position.shape[0])):
+        for i in tqdm(range(position.shape[0]), desc="GQNRoom", mininterval=1):
 
             # add the camera in the environment
             self.scene.add_node(perspective_camera_node)

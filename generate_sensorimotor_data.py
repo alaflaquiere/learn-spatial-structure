@@ -97,9 +97,10 @@ if __name__ == "__main__":
 
     parser = ArgumentParser()
     parser.add_argument("-n", "--n_transitions", dest="n_transitions", help="number of transitions", type=int, default=int(3e6))
-    parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation", choices=["gridexplorer", "armflatroom", "armgqnroom"])
+    parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation", choices=["gridexplorer", "armflatroom", "armgqnroom"],
+                        required=True)
     parser.add_argument("-r", "--n_runs", dest="n_runs", help="number of independent datasets generated", type=int, default=10)
-    parser.add_argument("-d", "--dir_data", dest="dir_data", help="directory where to save the data", default="dataset/grid_explorer")
+    parser.add_argument("-d", "--dir_data", dest="dir_data", help="directory where to save the data", required=True)
     parser.add_argument("-v", "--visual", dest="display_exploration", help="flag to turn the online display on or off", action="store_true")
 
     # get arguments
@@ -127,7 +128,7 @@ if __name__ == "__main__":
         print("################ ENVIRONMENT {} ################".format(trial))
 
         # create the trial subdirectory
-        dir_data_trial = "/".join([dir_data, str(trial)])
+        dir_data_trial = "/".join([dir_data, "dataset"+str(trial)])
         if not os.path.exists(dir_data_trial):
             os.makedirs(dir_data_trial)
 
@@ -159,9 +160,15 @@ if __name__ == "__main__":
             print("Error: invalid type of simulation")
             sys.exit()
 
-        # save the agent and environment parameters
+        # save the agent and environment parameters in a readable form
         my_agent.log(dir_data_trial + "/agent_params.txt")
         my_environment.log(dir_data_trial + "/environment_params.txt")
+
+        # save my_agent and my_environment to disk
+        with open(dir_data_trial + "/agent.pkl", "wb") as file:
+            pickle.dump(my_agent, file)
+        with open(dir_data_trial + "/environment.pkl", "wb") as file:
+            pickle.dump(my_environment, file)
 
         # create and save a unique identifier for the dataset
         with open(dir_data_trial + "/uuid.txt", "w") as file:
@@ -174,7 +181,4 @@ if __name__ == "__main__":
 
     input("Press any key to exit the program.")
 
-    # TODO: add time during generation of data
-    # TODO: remove ²
-    # TODO: tqdm everywhere
     # TODO: put the singleenv datasets into a /0/ folder
