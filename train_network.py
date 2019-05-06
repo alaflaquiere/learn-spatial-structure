@@ -180,7 +180,7 @@ if __name__ == "__main__":
             transitions = normalize_data(transitions)
 
             # create the trial subdirectory
-            dir_model_trial = "/".join([dir_model, simu_type, str(trial)])
+            dir_model_trial = "/".join([dir_model, simu_type, "run" + str(trial)])
             if not os.path.exists(dir_model_trial):
                 os.makedirs(dir_model_trial)
 

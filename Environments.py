@@ -390,7 +390,7 @@ class GQNRoom:
 
     def __init__(self, n_obstacles=7):
 
-        self.type = "GQNRoom"
+        self.type = "3dRoom"
         self.n_sensations = 16 * 16 * 3
         self.env_size = (7, 7)
         self.n_obstacles = n_obstacles

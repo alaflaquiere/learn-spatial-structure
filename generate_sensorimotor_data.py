@@ -97,9 +97,9 @@ if __name__ == "__main__":
 
     parser = ArgumentParser()
     parser.add_argument("-n", "--n_transitions", dest="n_transitions", help="number of transitions", type=int, default=int(3e6))
-    parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation", choices=["gridexplorer", "armflatroom", "armgqnroom"],
+    parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation", choices=["gridexplorer", "armflatroom", "arm3droom"],
                         required=True)
-    parser.add_argument("-r", "--n_runs", dest="n_runs", help="number of independent datasets generated", type=int, default=10)
+    parser.add_argument("-r", "--n_runs", dest="n_runs", help="number of independent datasets generated", type=int, default=1)
     parser.add_argument("-d", "--dir_data", dest="dir_data", help="directory where to save the data", required=True)
     parser.add_argument("-v", "--visual", dest="display_exploration", help="flag to turn the online display on or off", action="store_true")
 
@@ -152,7 +152,7 @@ if __name__ == "__main__":
             else:
                 my_environment = Environments.FlatRoom()
 
-        elif type_simu == "armgqnroom":
+        elif type_simu == "arm3droom":
             my_agent = Agents.HingeArm(segments_length=[0.5, 0.5, 0.5])  # working space of radius 1.5 in an environment of size size 7
             my_environment = Environments.GQNRoom()
 
