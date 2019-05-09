@@ -154,11 +154,11 @@ if __name__ == "__main__":
     else:
         print("1 run will be performed on each dataset")
         if n_simulations != 1:
-            ans = input("> WARNING: n_simulations ({}) is overwritten to be {}; continue? [y,n]: ".format(n_simulations, len(subfolder_list)))
-            if ans is "y":
-                n_simulations = len(subfolder_list)
-            else:
+            ans = input("> WARNING: n_simulations ({}) is overwritten to be 1 for each dataset; continue? [y,n]: ".format(n_simulations))
+            if ans is "n":
                 sys.exit()
+        n_simulations = len(subfolder_list)
+
 
     # run the training on the different types of data
     for simu_type in simu_types:
@@ -166,11 +166,11 @@ if __name__ == "__main__":
         # iterate over the runs
         for trial in range(n_simulations):
 
-            print("################ {} DATA - TRIAL {} ################".format(simu_type, trial))
-
             # get the correct folder and file name
-            sub_dir_data = "{}/dataset{}".format(dir_data, trial % n_simulations)
+            sub_dir_data = "{}/dataset{}".format(dir_data, trial % len(subfolder_list))
             filename = "{}/dataset_{}.pkl".format(sub_dir_data, simu_type)
+
+            print("################ {} DATA - TRIAL {} (dataset: {}) ################".format(simu_type, trial, sub_dir_data + filename))
 
             # load the data
             transitions = load_sensorimotor_transitions(filename)
