@@ -170,8 +170,8 @@ class SensorimotorPredictiveNetwork:
                 command = "python display_progress.py -f " + self.dest_model + "/display_progress/display_data.pkl"
                 display_proc = subprocess.Popen(command)
             elif platform.system() == 'Linux':
-                command = "exec python display_progress.py -f " + self.dest_model + "/display_progress/display_data.pkl"
-                server_proc = subprocess.Popen([command], shell=True)
+                command = "exec python3 display_progress.py -f " + self.dest_model + "/display_progress/display_data.pkl"
+                display_proc = subprocess.Popen([command], shell=True)
 
         # open a session
         with tf.Session() as self.sess:
