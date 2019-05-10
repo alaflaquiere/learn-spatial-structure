@@ -161,7 +161,7 @@ if __name__ == "__main__":
 
 
     # run the training on the different types of data
-    for simu_type in simu_types:
+    for simu_type in simu_types:  # todo: invert the range over simus and the range over simu_types (same results but appear differently in tensorboard)
 
         # iterate over the runs
         for trial in range(n_simulations):

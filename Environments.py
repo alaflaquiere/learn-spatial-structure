@@ -318,8 +318,6 @@ class FlatRoom:
             if collision is False:
                 sensations[i, :] = sens["proximity"]
 
-        print(" done.")
-
         return sensations
 
     def generate_shift(self, k=1, static=False):
