@@ -52,6 +52,7 @@ class SensorimotorPredictiveNetwork:
     def __init__(self, dim_motor=3, dim_sensor=4, dim_enc=3, dest_model="model/trained_model", act_fn="selu"):
 
         # set attributes
+        self.type = "SensorimotorPredictiveNetwork"
         self.dim_enc = dim_enc
         self.encoding_layers_size = [150, 100, 50]
         self.predictive_layers_size = [200, 150, 100]
@@ -83,7 +84,8 @@ class SensorimotorPredictiveNetwork:
 
         # create placeholders for the dissimilarity measures
         self.metric_error = tf.placeholder(dtype=tf.float32, shape=[], name='metric_error')
-        self.topology_error = tf.placeholder(dtype=tf.float32, shape=[], name='topology_error')
+        self.topology_error_in_P = tf.placeholder(dtype=tf.float32, shape=[], name='topology_error_in_P')
+        self.topology_error_in_H = tf.placeholder(dtype=tf.float32, shape=[], name='topology_error_in_H')
 
         # define the network
         # define the motor encoding modules
@@ -122,7 +124,8 @@ class SensorimotorPredictiveNetwork:
         # create trackers for Tensorboard
         tf.summary.scalar("loss", self.loss)
         tf.summary.scalar("metric_error", self.metric_error)
-        tf.summary.scalar("topology_error", self.topology_error)
+        tf.summary.scalar("topology_error_in_P", self.topology_error_in_P)
+        tf.summary.scalar("topology_error_in_H", self.topology_error_in_H)
         tf.summary.scalar("learning_rate", self.learning_rate)
         self.merged_summaries = tf.summary.merge_all()
         self.graph = tf.get_default_graph()  # get the default graph
@@ -195,10 +198,10 @@ class SensorimotorPredictiveNetwork:
                 epoch, current_loss = self.train(data=data, number_epochs=1000)
 
                 # get tracked variables and send them to Tensorboard
-                fitted_p, metric_error, topo_error, encoding, prediction, sensation = self.track_progress(data, disp)
+                fitted_p, metric_error, topo_error_in_P, topo_error_in_H, encoding, prediction, sensation = self.track_progress(data, disp)
 
-                print("epoch: {:6d}, loss: {:.2e}, metric error: {:.2e}, topo error: {:.2e} - ({:.2f} sec) ".format(epoch, current_loss, metric_error,
-                                                                                                                    topo_error, time.time() - t0))
+                print("epoch: {:6d}, loss: {:.2e}, metric error: {:.2e}, topo error in P: {:.2e}, topo error in H: {:.2e} - ({:.2f} sec)"
+                      .format(epoch, current_loss, metric_error, topo_error_in_P, topo_error_in_H, time.time() - t0))
 
                 # save the network
                 self.save_network()
@@ -210,7 +213,7 @@ class SensorimotorPredictiveNetwork:
         if disp:
             display_proc.kill()
 
-    def compute_weighted_affine_errors(self, target_set, origin_set, weight=0):
+    def compute_weighted_affine_errors_in_P(self, target_set, origin_set, weight=0):
         """
         Compute the affine transformation: target_set = origin_set * coef_ + intercept_
         Estimate the error between the metrics of target_set and of the projection of origin_set in the target_set space.
@@ -222,7 +225,7 @@ class SensorimotorPredictiveNetwork:
             weight - relative weight of smaller distances relative to large distances (weight >= 0, with weight = 0 for a uniform weighting)
 
         Returns:
-            error - mean metric error between the projected set and the target_set
+            weighted_error - mean metric error between the projected set and the target_set
             fitted - linear projection of origin_set into the target space
         """
 
@@ -241,6 +244,28 @@ class SensorimotorPredictiveNetwork:
 
         return weighted_error, fitted
 
+    def compute_topology_error_in_H(self, p_set, h_set, weight=10):
+        """
+        Estimates how much the topology of P_set is respected by H_set.
+
+        Inputs:
+            p_set - (k, dim_P) array
+            h_set - (k, dim_H) array
+            weight - relative weight of smaller P distances relative to large distances (weight >= 0, with weight = 0 for a uniform weighting)
+
+        Returns:
+            weighted_error - mean topological dissimilarity
+        """
+
+        # get the metrics of H_set and P_set
+        pdist_h = pdist(h_set)
+        pdist_p = pdist(p_set)
+
+        # compute the mean weighted error between the metrics
+        weighted_error = np.mean(pdist_h / pdist_h.max() * np.exp(-weight * pdist_p / pdist_p.max()))
+
+        return weighted_error
+
     def track_progress(self, data, disp):
         """
         Computes and saves the variables tracked via Tensorboard + save the data to display by display_progress.py if disp=True.
@@ -250,8 +275,9 @@ class SensorimotorPredictiveNetwork:
         motor_encoding = self.sess.run(self.encode_module_t.output, feed_dict={self.motor_t: data["grid_motor"]})
 
         # compute the dissimilarities and affine projections
-        metric_err, fitted_p = self.compute_weighted_affine_errors(data["grid_pos"], motor_encoding, weight=0)
-        topo_err, _ = self.compute_weighted_affine_errors(data["grid_pos"], motor_encoding, weight=10)
+        metric_err, fitted_p = self.compute_weighted_affine_errors_in_P(data["grid_pos"], motor_encoding, weight=0)
+        topo_err_in_P, _ = self.compute_weighted_affine_errors_in_P(data["grid_pos"], motor_encoding, weight=10)
+        topo_err_in_H = self.compute_topology_error_in_H(data["grid_pos"], motor_encoding, weight=10)
 
         # get a random batch to evaluate the prediction error (without replace significantly increases computation time)
         batch_indexes = np.random.choice(data["motor_t"].shape[0], self.batch_size, replace=True)
@@ -266,7 +292,8 @@ class SensorimotorPredictiveNetwork:
                                                                                                 self.motor_tp: data["motor_tp"][batch_indexes, :],
                                                                                                 self.sensor_tp: data["sensor_tp"][batch_indexes, :],
                                                                                                 self.metric_error: metric_err,
-                                                                                                self.topology_error: topo_err})
+                                                                                                self.topology_error_in_P: topo_err_in_P,
+                                                                                                self.topology_error_in_H: topo_err_in_H})
 
         # save the summaries
         curr_epoch = self.sess.run(self.global_step)
@@ -281,7 +308,8 @@ class SensorimotorPredictiveNetwork:
                             "encoded_motor": motor_encoding,
                             "projected_encoding": fitted_p,
                             "metric_error": metric_err,
-                            "topo_error": topo_err,
+                            "topo_error_in_P": topo_err_in_P,
+                            "topo_error_in_H": topo_err_in_H,
                             "gt_sensation": gt_sensation,
                             "predicted_sensation": predicted_sensation
                             }
@@ -292,7 +320,7 @@ class SensorimotorPredictiveNetwork:
             with open(self.dest_model + "/display_progress/display_data.pkl", "wb") as file:
                 pickle.dump(display_dict, file)
 
-        return fitted_p, metric_err, topo_err, motor_encoding, predicted_sensation, gt_sensation
+        return fitted_p, metric_err, topo_err_in_P, topo_err_in_H, motor_encoding, predicted_sensation, gt_sensation
 
     def save_network(self):
         """

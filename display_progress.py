@@ -89,10 +89,16 @@ def display(file):
         ax2.set_title("encoding space")
         if dim_encoding == 1:
             ax2.plot(data["encoded_motor"][:, 0], 0 * data["encoded_motor"][:, 0], 'rx')
+            ax2.text(0.05, 0.05, "topo_error_in_H={:.2e}".format(data["topo_error_in_H"]), transform=ax2.transAxes,
+                     fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         elif dim_encoding == 2:
             ax2.plot(data["encoded_motor"][:, 0], data["encoded_motor"][:, 1], 'rx')
+            ax2.text(0.05, 0.05, "topo_error_in_H={:.2e}".format(data["topo_error_in_H"]), transform=ax2.transAxes,
+                     fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         elif dim_encoding == 3:
             ax2.plot(data["encoded_motor"][:, 0], data["encoded_motor"][:, 1], data["encoded_motor"][:, 2], 'rx')
+            ax2.text(0.05, 0.05, 0.05, "topo_error_in_H={:.2e}".format(data["topo_error_in_H"]), transform=ax2.transAxes,
+                     fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         ax2.axis('equal')
 
         # plot the sensor positions and the linear projection of the encoded motor configurations in the same space
@@ -100,7 +106,7 @@ def display(file):
         ax3.set_title("sensor position")
         ax3.plot(data["gt_pos"][:, 0], data["gt_pos"][:, 1], 'ko')
         ax3.plot(data["projected_encoding"][:, 0], data["projected_encoding"][:, 1], 'rx')
-        ax3.text(0.05, 0.95, "topo_error={:.2e}\nmetric error={:.2e}".format(data["topo_error"], data["metric_error"]), transform=ax3.transAxes,
+        ax3.text(0.05, 0.95, "topo_error_in_P={:.2e}\nmetric error={:.2e}".format(data["topo_error_in_P"], data["metric_error"]), transform=ax3.transAxes,
                  fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         ax3.axis('equal')
 
