@@ -99,6 +99,8 @@ def generate_sensorimotor_data(agent, environment, explo_type, k, dest_data="dat
     with open("/".join([dest_data, filename]), 'wb') as file:
         pickle.dump(transitions, file)
 
+    # TODO: check that the file has been correctly saved by trying to load it
+
     print("data generation finished")
 
 
@@ -180,8 +182,8 @@ if __name__ == "__main__":
         with open(dir_data_trial + "/agent.pkl", "wb") as file:
             pickle.dump(my_agent, file)
         # TODO: THIS NEED TO BE REWORKED IN THE FLATLAND CASE SO THAT THE NECESSARY PARAMETERS OF THE ENVIRONMENT ARE SAVED (ABLE TO RECONSTRUCT)
-        with open(dir_data_trial + "/environment.pkl", "wb") as file:
-            pickle.dump(my_environment, file)
+        # with open(dir_data_trial + "/environment.pkl", "wb") as file:
+        #     pickle.dump(my_environment, file)
 
         # create and save a unique identifier for the dataset
         with open(dir_data_trial + "/uuid.txt", "w") as file:
@@ -194,6 +196,8 @@ if __name__ == "__main__":
                                    n_transitions, dir_data_trial, scale_static_case=scale_mm, disp=display_exploration)
         generate_sensorimotor_data(my_agent, my_environment, "MME",
                                    n_transitions, dir_data_trial, scale_static_case=scale_mm, disp=display_exploration)
+
+        # TODO: save in a temporary folder while the dataset is being generated, and rename it to the correct name only once it has been entirely generated and checked
 
     input("Press any key to exit the program.")
 
