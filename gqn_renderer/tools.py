@@ -120,7 +120,7 @@ def place_objects(scene,
                   discrete_position=False,
                   rotate_object=False):
     # Place objects
-    directions = [-1.5, 0.0, 1.5]
+    directions = [-3., -1., 1., 3.]  # [-1.5, 0.0, 1.5]
     available_positions = []
     for z in directions:
         for x in directions:

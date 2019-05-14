@@ -387,7 +387,7 @@ class GQNRoom:
         instance of the simulation
     """
 
-    def __init__(self, n_obstacles=7):
+    def __init__(self, n_obstacles=16):  # n_obstacles=7
 
         self.type = "3dRoom"
         self.n_sensations = 16 * 16 * 3
@@ -441,11 +441,11 @@ class GQNRoom:
             self.scene.add_node(perspective_camera_node)
 
             # set the camera position
-            camera_position = [position[i, 0], 1.2, position[i, 1]]
+            camera_position = [position[i, 0], 1.6, position[i, 1]]  # [position[i, 0], 1.2, position[i, 1]]
             perspective_camera_node.translation = camera_position
 
             # set the camera orientation
-            camera_direction = np.array([5, 1.8, 0])
+            camera_direction = np.array([2.5, 1.8, 0])  # [5, 1.8, 0]
             yaw, pitch = tools.compute_yaw_and_pitch(camera_direction)
             perspective_camera_node.rotation = tools.generate_camera_quaternion(yaw, pitch)
 
@@ -480,14 +480,14 @@ class GQNRoom:
             shift = np.array(self.env_size)/2 * np.random.rand(k, 2) - np.array(self.env_size)/4
         return shift
 
-    def display(self, position=[8, 4.1, 0]):
+    def display(self, position=[8, 4.1, 0], resolution=16):
 
         # create the camera
         perspective_camera = gqn.pyrender.PerspectiveCamera(yfov=np.pi / 4)
         perspective_camera_node = gqn.pyrender.Node(camera=perspective_camera, translation=np.array([0, 1, 1]))
 
         # create the renderer
-        renderer = gqn.pyrender.OffscreenRenderer(viewport_width=16, viewport_height=16)
+        renderer = gqn.pyrender.OffscreenRenderer(viewport_width=resolution, viewport_height=resolution)
 
         fig = plt.figure(figsize=(4, 4))
         ax = fig.add_subplot(1, 1, 1)

@@ -159,6 +159,11 @@ if __name__ == "__main__":
                 sys.exit()
         n_simulations = len(subfolder_list)
 
+
+#################################
+    n_simulations = 3
+#################################
+
     # run the training on the different types of data
     for simu_type in simu_types:  # todo: invert the range over simus and the range over simu_types (same results but appear differently in tensorboard)
 
