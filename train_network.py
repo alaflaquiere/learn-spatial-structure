@@ -145,7 +145,7 @@ if __name__ == "__main__":
         simu_types += ["MME"]
 
     # get the different sub-datasets
-    subfolder_list = sorted(glob.glob(dir_data + "/*"))
+    subfolder_list = sorted(glob.glob(dir_data + "/dataset*"))
     print("{} datasets have been found in {}".format(len(subfolder_list), dir_data))
 
     # check that n_simulations is compatible with subfolder_list
@@ -159,16 +159,11 @@ if __name__ == "__main__":
                 sys.exit()
         n_simulations = len(subfolder_list)
 
+    # iterate over the runs
+    for trial in range(n_simulations):
 
-#################################
-    n_simulations = 3
-#################################
-
-    # run the training on the different types of data
-    for simu_type in simu_types:  # todo: invert the range over simus and the range over simu_types (same results but appear differently in tensorboard)
-
-        # iterate over the runs
-        for trial in range(n_simulations):
+        # run the training on the different types of data
+        for simu_type in simu_types:
 
             # get the correct folder and file name
             sub_dir_data = "{}/dataset{}".format(dir_data, trial % len(subfolder_list))
