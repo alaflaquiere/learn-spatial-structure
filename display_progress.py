@@ -95,7 +95,7 @@ def display(file):
             ax2.plot(data["encoded_motor"][:, 0], data["encoded_motor"][:, 1], 'rx')
             ax2.text(0.05, 0.05, "topo_error_in_H={:.2e}".format(data["topo_error_in_H"]), transform=ax2.transAxes,
                      fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
-        elif dim_encoding == 3:
+        elif dim_encoding >= 3:
             ax2.plot(data["encoded_motor"][:, 0], data["encoded_motor"][:, 1], data["encoded_motor"][:, 2], 'rx')
             ax2.text(0.05, 0.05, 0.05, "topo_error_in_H={:.2e}".format(data["topo_error_in_H"]), transform=ax2.transAxes,
                      fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))

@@ -71,7 +71,6 @@ def generate_sensorimotor_data(agent, environment, explo_type, k, dest_data="dat
         # compute the holistic position of the sensor
         holi_pos_t = ego_pos_t + shifts_t
         holi_pos_tp = ego_pos_tp + shifts_tp
-        # TODO: FIX THE MM CASE SO THAT IT EXPLORES THE SAME SURFACE
 
         # get the corresponding sensations
         sensations_t = environment.get_sensation_at_position(holi_pos_t, display=disp)
@@ -107,7 +106,7 @@ def generate_sensorimotor_data(agent, environment, explo_type, k, dest_data="dat
 if __name__ == "__main__":
 
     parser = ArgumentParser()
-    parser.add_argument("-n", "--n_transitions", dest="n_transitions", help="number of transitions", type=int, default=int(3e6))
+    parser.add_argument("-n", "--n_transitions", dest="n_transitions", help="number of transitions", type=int, default=150000)  # int(3e6)
     parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation", choices=["gridexplorer", "armflatroom", "arm3droom"],
                         required=True)
     parser.add_argument("-r", "--n_runs", dest="n_runs", help="number of independent datasets generated", type=int, default=1)
@@ -181,9 +180,9 @@ if __name__ == "__main__":
         # save my_agent and my_environment to disk
         with open(dir_data_trial + "/agent.pkl", "wb") as file:
             pickle.dump(my_agent, file)
-        # TODO: THIS NEED TO BE REWORKED IN THE FLATLAND CASE SO THAT THE NECESSARY PARAMETERS OF THE ENVIRONMENT ARE SAVED (ABLE TO RECONSTRUCT)
-        # with open(dir_data_trial + "/environment.pkl", "wb") as file:
-        #     pickle.dump(my_environment, file)
+
+        with open(dir_data_trial + "/environment.pkl", "wb") as file:  # todo: NEEDS TO BE REWORKED IN THE FLATLAND CASE SO THAT THE NECESSARY PARAMETERS OF THE ENVIRONMENT ARE SAVED (ABLE TO RECONSTRUCT)
+            pickle.dump(my_environment, file)
 
         # create and save a unique identifier for the dataset
         with open(dir_data_trial + "/uuid.txt", "w") as file:
@@ -200,5 +199,3 @@ if __name__ == "__main__":
         # TODO: save in a temporary folder while the dataset is being generated, and rename it to the correct name only once it has been entirely generated and checked
 
     input("Press any key to exit the program.")
-
-    # TODO: put the singleenv datasets into a /0/ folder

@@ -277,7 +277,7 @@ class SensorimotorPredictiveNetwork:
         # compute the dissimilarities and affine projections
         metric_err, fitted_p = self.compute_weighted_affine_errors_in_P(data["grid_pos"], motor_encoding, weight=0)
         topo_err_in_P, _ = self.compute_weighted_affine_errors_in_P(data["grid_pos"], motor_encoding, weight=10)
-        topo_err_in_H = self.compute_topology_error_in_H(data["grid_pos"], motor_encoding, weight=10)
+        topo_err_in_H = self.compute_topology_error_in_H(data["grid_pos"], motor_encoding, weight=50)  #10
 
         # get a random batch to evaluate the prediction error (without replace significantly increases computation time)
         batch_indexes = np.random.choice(data["motor_t"].shape[0], self.batch_size, replace=True)

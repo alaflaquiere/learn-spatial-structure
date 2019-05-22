@@ -368,10 +368,10 @@ class FlatRoom:
 
 
 class GQNRoom:
-    # todo: mention the original code somewhere
     """
     A 3D room of size (7,7) randomly filled with random objects. The position (0,0) corresponds to the center of the room.
     At each position, the environment generates a sensory input corresponding to the reading of a RGB camera with a fixed orientation.
+    The code has been adapted from https://github.com/musyoku/gqn-dataset-renderer
 
     Attributes
     ----------
@@ -480,7 +480,7 @@ class GQNRoom:
             shift = np.array(self.env_size)/2 * np.random.rand(k, 2) - np.array(self.env_size)/4
         return shift
 
-    def display(self, position=[8, 4.1, 0], resolution=16):
+    def display(self, position=(8, 8, 8), orientation=(5, 4.7, 5), resolution=512):
 
         # create the camera
         perspective_camera = gqn.pyrender.PerspectiveCamera(yfov=np.pi / 4)
@@ -497,11 +497,11 @@ class GQNRoom:
         self.scene.add_node(perspective_camera_node)
 
         # set the camera position
-        camera_position = position
+        camera_position = list(position)
         perspective_camera_node.translation = camera_position
 
         # set the camera orientation
-        camera_direction = np.array([5, 1.8, 0])
+        camera_direction = np.array(orientation)
         yaw, pitch = tools.compute_yaw_and_pitch(camera_direction)
         perspective_camera_node.rotation = tools.generate_camera_quaternion(yaw, pitch)
 
@@ -514,7 +514,10 @@ class GQNRoom:
         # clean the axis and display the image
         ax.cla()
         ax.imshow(image, interpolation="none")
+        ax.axis("off")
         plt.pause(1e-8)
+
+        return fig
 
     def log(self, dest_log):
         """

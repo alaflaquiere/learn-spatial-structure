@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
-# TODO: add a save() method to pickle the envs and agents to the disk
+# TODO: add a save() method to save the envs and agents to the disk
 
 """
 Collection of agents that can be used by generate-sensorimotor-data.py.
