@@ -195,7 +195,7 @@ def display_all_projections_of_a_single_run(dir_exp, run):
             ax1.plot(data["motor"][:, 0], data["motor"][:, 1], 'b.')
             ax1.set_xlabel('$m_1$')
             ax1.set_ylabel('$m_2$')
-        elif dim_motor == 3:
+        elif dim_motor >= 3:
             ax1.plot(data["motor"][:, 0], data["motor"][:, 1], data["motor"][:, 2], 'b.')
             ax1.set_xlabel('$m_1$')
             ax1.set_ylabel('$m_2$')

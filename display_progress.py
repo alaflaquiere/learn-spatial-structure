@@ -80,7 +80,7 @@ def display(file):
             ax1.plot(data["motor"][:, 0], 0 * data["motor"][:, 0], 'bo')
         elif dim_motor == 2:
             ax1.plot(data["motor"][:, 0], data["motor"][:, 1], 'bo')
-        elif dim_motor == 3:
+        elif dim_motor >= 3:
             ax1.plot(data["motor"][:, 0], data["motor"][:, 1], data["motor"][:, 2], 'bo')
         ax1.axis('equal')
 
