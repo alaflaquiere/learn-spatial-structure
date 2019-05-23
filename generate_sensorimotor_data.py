@@ -26,6 +26,18 @@ def generate_sensorimotor_data(agent, environment, explo_type, k, dest_data="dat
                      MME: the same random shift is used for the first and second sensorimotor couple of each transition
         k - number of transitions to generate
         dest_data - directory where to save the data
+
+    Output:
+        The generated dataset is saved in <dest_data>/dataset_<explo_type>.pkl as a dictionary with the following structure:
+        transitions = {"motor_t": np.array(n_transitions, agent.n_motors),
+                       "sensor_t": np.array(n_transitions, environment.n_sensations),
+                       "shift_t": np.array(n_transitions, 2)2,
+                       "motor_tp": np.array(n_transitions, agent.n_motors),
+                       "sensor_tp": np.array(n_transitions, environment.n_sensations),
+                       "shift_tp": np.array(n_transitions, 2),
+                       "grid_motor": np.array(agent.size_regular_grid, agent.n_motors),
+                       "grid_pos": np.array(agent.size_regular_grid, 2)
+                       }
     """
 
     print("generating {} data...".format(explo_type))
@@ -181,8 +193,10 @@ if __name__ == "__main__":
         with open(dir_data_trial + "/agent.pkl", "wb") as file:
             pickle.dump(my_agent, file)
 
-        with open(dir_data_trial + "/environment.pkl", "wb") as file:  # todo: NEEDS TO BE REWORKED IN THE FLATLAND CASE SO THAT THE NECESSARY PARAMETERS OF THE ENVIRONMENT ARE SAVED (ABLE TO RECONSTRUCT)
-            pickle.dump(my_environment, file)
+        if type_simu != "armflatroom":
+        # todo: NEEDS TO BE REWORKED IN THE FLATLAND CASE SO THAT THE NECESSARY PARAMETERS OF THE ENVIRONMENT ARE SAVED (ABLE TO RECONSTRUCT)
+            with open(dir_data_trial + "/environment.pkl", "wb") as file:
+                pickle.dump(my_environment, file)
 
         # create and save a unique identifier for the dataset
         with open(dir_data_trial + "/uuid.txt", "w") as file:
