@@ -9,6 +9,7 @@ from argparse import ArgumentParser
 import uuid
 
 
+# todo: use cpickle instead of pickle to save and load the data
 # TODO: save an image of the environment with the data
 # todo: check what is missing in the local/venv pyrender
 
