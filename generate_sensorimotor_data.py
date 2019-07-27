@@ -120,8 +120,8 @@ if __name__ == "__main__":
 
     parser = ArgumentParser()
     parser.add_argument("-n", "--n_transitions", dest="n_transitions", help="number of transitions", type=int, default=150000)  # int(3e6)
-    parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation", choices=["gridexplorer", "armflatroom", "arm3droom"],
-                        required=True)
+    parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation",
+                        choices=["gridexplorer", "manydofgridexplorer", "armflatroom", "arm3droom", "manydofarm3droom"], required=True)
     parser.add_argument("-r", "--n_runs", dest="n_runs", help="number of independent datasets generated", type=int, default=1)
     parser.add_argument("-d", "--dir_data", dest="dir_data", help="directory where to save the data", required=True)
     parser.add_argument("-s", "--scale_mm", dest="scale_mm",
@@ -163,6 +163,10 @@ if __name__ == "__main__":
             my_agent = Agents.GridExplorer()
             my_environment = Environments.GridWorld()
 
+        elif type_simu == "manydofgridexplorer":
+            my_agent = Agents.ManyDofGridExplorer()
+            my_environment = Environments.GridWorld()
+
         elif type_simu == "armflatroom":
             my_agent = Agents.HingeArm(segments_length=[12, 12, 12])  # working space of radius 36 in an environment of size size 150
 
@@ -180,6 +184,10 @@ if __name__ == "__main__":
 
         elif type_simu == "arm3droom":
             my_agent = Agents.HingeArm(segments_length=[0.5, 0.5, 0.5])  # working space of radius 1.5 in an environment of size size 7
+            my_environment = Environments.GQNRoom()
+
+        elif type_simu == "manydofarm3droom":
+            my_agent = Agents.ManyDofHingeArm(segments_length=[0.375, 0.375, 0.375, 0.375])  # working space of radius 1.5 in an environment of size size 7
             my_environment = Environments.GQNRoom()
 
         else:
