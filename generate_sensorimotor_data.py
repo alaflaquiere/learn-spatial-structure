@@ -53,6 +53,17 @@ def generate_sensorimotor_data(agent, environment, explo_type, k, dest_data="dat
                    "grid_motor": np.full((agent.size_regular_grid, agent.n_motors), np.nan),
                    "grid_pos": np.full((agent.size_regular_grid, 2), np.nan)}
 
+    # sanity check: try dumping the dictionary to check the size is ok
+    try:
+        temp_name = "/".join([dest_data, "test_dump.todelete"])
+        with open(temp_name, 'wb') as file:
+            pickle.dump(transitions, file)
+    except OverflowError:
+        print("Error: the dataset is too large to pickle - reduce the number of transitions")
+        return 1
+    finally:
+        os.remove(temp_name)
+
     # generate random transitions
     filled = 0
     while filled < k:

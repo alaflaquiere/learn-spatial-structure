@@ -279,7 +279,8 @@ class HingeArm:
         self.n_motors = 3
         self.motor_amplitude = np.pi
         self.segments_length = segments_length  # the arm covers a working space of radius 36 in an environment of size size 150
-        self.size_regular_grid = 6
+        self.reso_regular_grid = 6
+        self.size_regular_grid = self.reso_regular_grid ** self.n_motors
 
     def get_position_from_motor(self, motor):
         """
@@ -311,9 +312,9 @@ class HingeArm:
         Generates a regular grid of motor configurations in the motor space.
         """
 
-        xx, yy, zz = np.meshgrid(np.linspace(-1, 1, self.size_regular_grid),
-                                 np.linspace(-1, 1, self.size_regular_grid),
-                                 np.linspace(-1, 1, self.size_regular_grid))
+        xx, yy, zz = np.meshgrid(np.linspace(-1, 1, self.reso_regular_grid),
+                                 np.linspace(-1, 1, self.reso_regular_grid),
+                                 np.linspace(-1, 1, self.reso_regular_grid))
         motor_grid = np.hstack((xx.reshape(-1, 1), yy.reshape(-1, 1), zz.reshape(-1, 1)))
 
         pos_grid = self.get_position_from_motor(motor_grid)
@@ -379,7 +380,8 @@ class ManyDofHingeArm:
         self.n_motors = 6
         self.motor_amplitude = [np.pi, np.pi, np.pi, np.pi, 1, 1]
         self.segments_length = segments_length  # the arm covers a working space of radius 36 in an environment of size size 150
-        self.size_regular_grid = 5
+        self.reso_regular_grid = 5
+        self.size_regular_grid = self.reso_regular_grid**self.n_motors
 
     def get_position_from_motor(self, motor):
         """
@@ -412,12 +414,12 @@ class ManyDofHingeArm:
         Generates a regular grid of motor configurations in the motor space.
         """
 
-        xx, yy, zz, aa, bb, cc = np.meshgrid(np.linspace(-1, 1, self.size_regular_grid),
-                                             np.linspace(-1, 1, self.size_regular_grid),
-                                             np.linspace(-1, 1, self.size_regular_grid),
-                                             np.linspace(-1, 1, self.size_regular_grid),
-                                             np.linspace(-1, 1, self.size_regular_grid),
-                                             np.linspace(-1, 1, self.size_regular_grid))
+        xx, yy, zz, aa, bb, cc = np.meshgrid(np.linspace(-1, 1, self.reso_regular_grid),
+                                             np.linspace(-1, 1, self.reso_regular_grid),
+                                             np.linspace(-1, 1, self.reso_regular_grid),
+                                             np.linspace(-1, 1, self.reso_regular_grid),
+                                             np.linspace(-1, 1, self.reso_regular_grid),
+                                             np.linspace(-1, 1, self.reso_regular_grid))
         motor_grid = np.hstack((xx.reshape(-1, 1), yy.reshape(-1, 1), zz.reshape(-1, 1), aa.reshape(-1, 1), bb.reshape(-1, 1), cc.reshape(-1, 1)))
 
         pos_grid = self.get_position_from_motor(motor_grid)
