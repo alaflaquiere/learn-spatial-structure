@@ -183,21 +183,25 @@ class ManyDofGridExplorer:
         for i in range(len(coordinates)):
             mapping[:, i] = coordinates[i].reshape((-1))
 
-        # apply a transformation to the mapping to create the non-linear state2motor_mapping (some normalizations are used to map to [0, 1])
-        state2motor_mapping = np.full(mapping.shape, np.nan)
-        state2motor_mapping[:, 0] = np.power(mapping[:, 0], 0.5, dtype=float)
-        state2motor_mapping[:, 1] = np.power(mapping[:, 1], 2, dtype=float)
-        state2motor_mapping[:, 2] = np.power(mapping[:, 2], 3, dtype=float)
-        state2motor_mapping[:, 3] = (np.log((mapping[:, 3] + 0.1) / 1.1) - np.log(0.1/1.1)) / (-np.log(0.1/1.1))
-        state2motor_mapping[:, 4] = (np.exp(mapping[:, 4]) - 1) / (np.exp(1) - 1)
-        state2motor_mapping[:, 5] = np.power(mapping[:, 5], 1, dtype=float)
-
-        # mix the contributions of the motor components via a random linear combination
-        state2motor_mapping = np.matmul(state2motor_mapping, 4 * np.random.rand(self.n_motors, self.n_motors) - 2)
-
-        # rescale the motor commands in the state2motor_mapping in [-1, 1]
+        # apply a transformation to the mapping to create the non-linear state2motor_mapping
+        #
+        # mixing matrix
+        mixing_matrix = 4 * np.random.rand(self.n_motors, self.n_motors) - 2
+        state2motor_mapping = np.matmul(mapping, np.linalg.inv(mixing_matrix))
+        #
+        # normalization of the values into [0, 1] for easy application of the non-linearities
         state2motor_mapping = state2motor_mapping - np.min(state2motor_mapping, axis=0)
         state2motor_mapping = state2motor_mapping / np.max(state2motor_mapping, axis=0)
+        #
+        # non-linear transformation from [0, 1] to [0, 1]
+        state2motor_mapping[:, 0] = np.power(state2motor_mapping[:, 0], 0.5, dtype=float)
+        state2motor_mapping[:, 1] = np.power(state2motor_mapping[:, 1], 2, dtype=float)
+        state2motor_mapping[:, 2] = np.power(state2motor_mapping[:, 2], 3, dtype=float)
+        state2motor_mapping[:, 3] = (np.log((state2motor_mapping[:, 3] + 0.1) / 1.1) - np.log(0.1 / 1.1)) / (-np.log(0.1 / 1.1))
+        state2motor_mapping[:, 4] = (np.exp(state2motor_mapping[:, 4]) - 1) / (np.exp(1) - 1)
+        state2motor_mapping[:, 5] = np.power(state2motor_mapping[:, 5], 1, dtype=float)
+
+        # rescale the motor commands in the state2motor_mapping in [-1, 1]
         state2motor_mapping = state2motor_mapping * 2 - 1
 
         # apply a trivial transformation (drop the last coordinates) to the mapping to create the state2pos_mapping
