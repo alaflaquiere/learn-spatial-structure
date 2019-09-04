@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 import train_network
 
 
-def read_and_display_results(dir_exp, label, color="r", fig=None):
+def read_and_display_results(dir_exp, label, color="r", fig=None, log_scale=False):
     """
     Plot the stats associated with an experiment. Compute the mean and std over all the runs in dir_exp.
 
@@ -51,6 +51,12 @@ def read_and_display_results(dir_exp, label, color="r", fig=None):
         _,      _, topo_errors_in_P = zip(*event_acc.Scalars("topology_error_in_P_1"))
         _,      _, topo_errors_in_H = zip(*event_acc.Scalars("topology_error_in_H_1"))
         _,      _, metric_errors = zip(*event_acc.Scalars("metric_error_1"))
+
+        # checking that all runs are valid (we assume that the first run has the correct number of epochs)
+        if len(all_epochs) > 0 and len(epochs) != len(all_epochs[0]):
+            print("Warning: the run has {} epochs values instead of {}".format(len(epochs), len(all_epochs[0])))
+            continue
+
         all_epochs += [epochs]
         all_losses += [losses]
         all_topo_errors_in_P += [topo_errors_in_P]
@@ -64,10 +70,13 @@ def read_and_display_results(dir_exp, label, color="r", fig=None):
     all_topo_errors_in_H = np.array(all_topo_errors_in_H)
     all_metric_errors = np.array(all_metric_errors)
 
-    # check that all epochs are compatible
-    epochs_std = np.std(all_epochs, axis=0)
-    if sum(epochs_std) != 0:
-        print("WARNING: the recorded epochs are not identical for all the runs; the stats are incorrect")
+    # get the number of valid runs
+    number_runs = all_epochs.shape[0]
+
+    # # check that all epochs are compatible  # TODO: USELESS, IT CRASHES BEFORE
+    # epochs_std = np.std(all_epochs, axis=0)
+    # if sum(epochs_std) != 0:
+    #     print("WARNING: the recorded epochs are not identical for all the runs; the stats are incorrect")
 
     # compute stats
     losses_mean = np.mean(all_losses, axis=0)
@@ -98,7 +107,7 @@ def read_and_display_results(dir_exp, label, color="r", fig=None):
     ax4.set_title('$D_{metric}$')
 
     # plot the variable evolution for each run
-    for run in range(len(sub_list)):
+    for run in range(number_runs):
         ax1.plot(all_epochs[run, :], all_losses[run, :], color=color, alpha=0.1)
         ax2.plot(all_epochs[run, :], all_topo_errors_in_P[run, :], color=color, alpha=0.1)
         ax3.plot(all_epochs[run, :], all_topo_errors_in_H[run, :], color=color, alpha=0.1)
@@ -106,22 +115,32 @@ def read_and_display_results(dir_exp, label, color="r", fig=None):
 
     # plot the stats
     ax1.plot(all_epochs[0, :], losses_mean, '-', color=color, label=label)
-    ax1.fill_between(all_epochs[0, :], losses_mean - losses_std, losses_mean + losses_std, facecolors=color, alpha=0.5)
+    ax1.fill_between(all_epochs[0, :], losses_mean - losses_std, losses_mean + losses_std,
+                     facecolors=color, alpha=0.3)  # 0.5
     ax1.legend()
+    if log_scale:
+        ax1.set_yscale("log")
     #
     ax2.plot(all_epochs[0, :], topo_errors_in_P_mean, '-', color=color, label=label)
     ax2.fill_between(all_epochs[0, :], topo_errors_in_P_mean - topo_errors_in_P_std, topo_errors_in_P_mean + topo_errors_in_P_std,
-                     facecolors=color, alpha=0.5)
+                     facecolors=color, alpha=0.3)
     ax2.legend()
+    if log_scale:
+        ax2.set_yscale("log")
     #
     ax3.plot(all_epochs[0, :], topo_errors_in_H_mean, '-', color=color, label=label)
     ax3.fill_between(all_epochs[0, :], topo_errors_in_H_mean - topo_errors_in_H_std, topo_errors_in_H_mean + topo_errors_in_H_std,
-                     facecolors=color, alpha=0.5)
+                     facecolors=color, alpha=0.3)
     ax3.legend()
+    if log_scale:
+        ax3.set_yscale("log")
     #
     ax4.plot(all_epochs[0, :], metric_errors_mean, '-', color=color, label=label)
-    ax4.fill_between(all_epochs[0, :], metric_errors_mean - metric_errors_std, metric_errors_mean + metric_errors_std, facecolors=color, alpha=0.5)
+    ax4.fill_between(all_epochs[0, :], metric_errors_mean - metric_errors_std, metric_errors_mean + metric_errors_std,
+                     facecolors=color, alpha=0.3)
     ax4.legend()
+    if log_scale:
+        ax4.set_yscale("log")
 
     plt.show(block=False)
 
