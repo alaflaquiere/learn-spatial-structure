@@ -12,13 +12,9 @@ Markdown==3.1
 matplotlib==3.0.3
 networkx==2.2
 numpy==1.16.3
-opencv-python==4.1.0.25
-Pillow==6.0.0
 protobuf==3.7.1
 pycparser==2.19
-pygame==1.9.6
 pyglet==1.4.0b1
-pymunk==5.4.2
 PyOpenGL==3.1.0
 pyparsing==2.4.0
 PyQt5==5.12.1
