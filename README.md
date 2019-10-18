@@ -83,7 +83,8 @@ generate_sensorimotor_data.py -n 150000 -t <type> -r 50 -d dataset/explo0
 ```
 \<type\> can be one of the three strings:
 
-* gridexplorer - for an agent in a discrete gridworld (fast)
+* gridexplorer3d - for an agent with 3 motor DoF in a discrete gridworld (fast)
+* gridexplorer6d - for an agent with 6 motor DoF in a discrete gridworld (fast)
 * arm3droom - for a three-segment arm moving a RGB camera in a 3D environment (slow)
 
 

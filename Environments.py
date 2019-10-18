@@ -166,6 +166,9 @@ class GridWorld:
         with open(dest_log, "w") as file:
             json.dump(serializable_dict, file, indent=1)
 
+    def save(self, destination):
+        pass
+
 
 class GQNRoom:
     """
@@ -337,3 +340,6 @@ class GQNRoom:
 
         with open(dest_log, "w") as file:
             json.dump(serializable_dict, file, indent=1)
+
+    def save(self, destination):
+        pass

@@ -7,9 +7,10 @@ import Environments
 import _pickle as cpickle
 from argparse import ArgumentParser
 import uuid
+import datetime
+import json
 
 # TODO: clean the dependencies (after removing flatland)
-
 # TODO: save an image of the environment with the data
 # todo: check what is missing in the local/venv pyrender
 
@@ -111,89 +112,69 @@ def generate_sensorimotor_data(agent, environment, explo_type, k, dest_data="dat
 
     if check_savability(dest_data, transitions) is False:
         print("ERROR: the dataset is too large to pickle - reduce the number of transitions, sensations, or motors")
-        return 1
+        return False
 
-    # generate random transitions
-    filled = 0
-    while filled < k:
+    # generate k motor states and sensor positions
+    motor_t, ego_pos_t = agent.generate_random_sampling(k)
+    motor_tp, ego_pos_tp = agent.generate_random_sampling(k)
 
-        # generate (k - filled) motor states and sensor positions
-        motor_t, ego_pos_t = agent.generate_random_sampling(k - filled)
-        motor_tp, ego_pos_tp = agent.generate_random_sampling(k - filled)
+    # generate k shifts of the environment
+    if explo_type is 'MEM':
+        shifts_t = environment.generate_shift(k)
+        shifts_tp = environment.generate_shift(k)
+    elif explo_type is 'MM':
+        shifts_t = environment.generate_shift(k, static=True)  # use environment.generate_shift to get the correct data type
+        shifts_tp = shifts_t
+    elif explo_type is 'MME':
+        shifts_t = environment.generate_shift(k)
+        shifts_tp = shifts_t
+    else:
+        print("ERROR: wrong type of exploration - use 'MM', 'MEM', or 'MME'")
 
-        # generate (k - filled) shifts of the environment
-        if explo_type is 'MEM':
-            shifts_t = environment.generate_shift(k - filled)
-            shifts_tp = environment.generate_shift(k - filled)
-        elif explo_type is 'MM':
-            shifts_t = environment.generate_shift(k - filled, static=True)  # use environment.generate_shift to get the correct data type
-            shifts_tp = shifts_t
-        elif explo_type is 'MME':
-            shifts_t = environment.generate_shift(k - filled)
-            shifts_tp = shifts_t
-        else:
-            print("ERROR: wrong type of exploration - use 'MM', 'MEM', or 'MME'")
-            return 1
+    # compute the holistic position of the sensor
+    holi_pos_t = ego_pos_t + shifts_t
+    holi_pos_tp = ego_pos_tp + shifts_tp
 
-        # compute the holistic position of the sensor
-        holi_pos_t = ego_pos_t + shifts_t
-        holi_pos_tp = ego_pos_tp + shifts_tp
+    # get the corresponding sensations
+    sensations_t = environment.get_sensation_at_position(holi_pos_t, display=disp)
+    sensations_tp = environment.get_sensation_at_position(holi_pos_tp, display=disp)
 
-        # get the corresponding sensations
-        sensations_t = environment.get_sensation_at_position(holi_pos_t, display=disp)
-        sensations_tp = environment.get_sensation_at_position(holi_pos_tp, display=disp)
-
-        # get the indexes of valid sensory inputs
-        valid_indexes = np.argwhere((~np.isnan(sensations_t[:, 0])) & (~np.isnan(sensations_tp[:, 0])))[:, 0]
-
-        # fill the dictionary
-        transitions["motor_t"][filled:filled + len(valid_indexes), :] = motor_t[valid_indexes, :]
-        transitions["sensor_t"][filled:filled + len(valid_indexes), :] = sensations_t[valid_indexes, :]
-        transitions["shift_t"][filled:filled + len(valid_indexes), :] = shifts_t[valid_indexes, :]
-        transitions["motor_tp"][filled:filled + len(valid_indexes), :] = motor_tp[valid_indexes, :]
-        transitions["sensor_tp"][filled:filled + len(valid_indexes), :] = sensations_tp[valid_indexes, :]
-        transitions["shift_tp"][filled:filled + len(valid_indexes), :] = shifts_tp[valid_indexes, :]
-
-        # update filled
-        filled = filled + len(valid_indexes)
+    if len(np.argwhere((np.isnan(sensations_t[:, 0])) & (np.isnan(sensations_tp[:, 0])))[:, 0]) > 0:
+        print("ERROR: not all sensations are valid - consider re-running the data generation")
+        return False
 
     # generate a regular grid of motor configurations and sensor egocentric positions for evaluation
-    transitions["grid_motor"], transitions["grid_pos"] = agent.generate_regular_sampling()
+    grid_motor, grid_pos = agent.generate_regular_sampling()
+
+    # fill the dictionary
+    transitions["motor_t"] = motor_t
+    transitions["sensor_t"] = sensations_t
+    transitions["shift_t"] = shifts_t
+    transitions["motor_tp"] = motor_tp
+    transitions["sensor_tp"] = sensations_tp
+    transitions["shift_tp"] = shifts_tp
+    transitions["grid_motor"] = grid_motor
+    transitions["grid_pos"] = grid_pos
 
     save_dictionary(dest_data, transitions, "dataset_{}.pkl".format(explo_type))
 
 
-def save_agent_and_environment(directory, agent, environment):
-    """save the agent and environment to disk"""
+def save_simulation(directory, parse, trial):
+    """save a UUID for the simulation"""
 
-    # save the agent and environment parameters in a readable form
-    agent.log(directory + "/agent_params.txt")
-    environment.log(directory + "/environment_params.txt")
-
-    # save agent to disk
+    dictionary = {"UUID": uuid.uuid4().hex,
+                  "Time": datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+                  "Nbr transitions": parse.n_transitions,
+                  "Type simulation": parse.type_simu,
+                  "Nbr runs": parse.n_runs,
+                  "Trial": trial,
+                  "Destination": directory}
     try:
-        with open(directory + "/agent.pkl", "wb") as f:
-            cpickle.dump(agent, f)
+        with open(directory + "/generation_params.txt", "w") as f:
+            json.dump(dictionary, f, indent=1)
     except:
-        print("ERROR: saving the agent in {} failed".format(directory))
+        print("ERROR: saving generation_params.txt in {} failed".format(directory))
         return False
-
-    # save environment to disk
-    try:
-        with open(directory + "/environment.pkl", "wb") as f:
-            cpickle.dump(environment, f)
-    except:
-        print("ERROR: saving the environment in {} failed".format(directory))
-        return False
-
-    # create and save a unique identifier for the dataset
-    try:
-        with open(directory + "/uuid.txt", "w") as f:
-            f.write(uuid.uuid4().hex)
-    except:
-        print("ERROR: saving the UUID in {} failed".format(directory))
-        return False
-
     return True
 
 
@@ -203,7 +184,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-n", "--n_transitions", dest="n_transitions", help="number of transitions", type=int, default=150000)
     parser.add_argument("-t", "--type", dest="type_simu", help="type of simulation",
-                        choices=["gridexplorer", "manydofgridexplorer", "arm3droom", "manydofarm3droom"], required=True)
+                        choices=["gridexplorer3dof", "gridexplorer6dof", "armroom3dof", "armroom6dof"], required=True)
     parser.add_argument("-r", "--n_runs", dest="n_runs", help="number of independent datasets generated", type=int, default=1)
     parser.add_argument("-d", "--dir_data", dest="dir_data", help="directory where to save the data", required=True)
     parser.add_argument("-v", "--visual", dest="display_exploration", help="flag to turn the online display on or off", action="store_true")
@@ -230,27 +211,30 @@ if __name__ == "__main__":
         create_directory(dir_data_trial, safe=False)
 
         # create the agent and environment according to the type of exploration
-        if type_simu == "gridexplorer":
-            my_agent = Agents.GridExplorer()
+        if type_simu == "gridexplorer3dof":
+            my_agent = Agents.GridExplorer3dof()
             my_environment = Environments.GridWorld()
         #
-        elif type_simu == "manydofgridexplorer":
-            my_agent = Agents.ManyDofGridExplorer()
+        elif type_simu == "gridexplorer6dof":
+            my_agent = Agents.GridExplorer6dof()
             my_environment = Environments.GridWorld()
         #
-        elif type_simu == "arm3droom":
-            my_agent = Agents.HingeArm(segments_length=[0.5, 0.5, 0.5])  # working space of radius 1.5 in an environment of size size 7
+        elif type_simu == "armroom3dof":
+            my_agent = Agents.HingeArm3dof()  # working space of radius 1.5 in an environment of size size 7
             my_environment = Environments.GQNRoom()
         #
-        elif type_simu == "manydofarm3droom":
-            my_agent = Agents.ManyDofHingeArm(segments_length=[0.375, 0.375, 0.375, 0.375])  # working space of radius 1.5 in an environment of size size 7
+        elif type_simu == "armroom6dof":
+            my_agent = Agents.HingeArm6dof()  # working space of radius 1.5 in an environment of size size 7
             my_environment = Environments.GQNRoom()
         #
         else:
-            print("ERROR: invalid type of simulation - use 'gridexplorer', 'manydofgridexplorer', 'arm3droom', or 'manydofarm3droom'")
+            print("ERROR: invalid type of simulation - use 'gridexplorer3dof', 'gridexplorer6dof', 'armroom3dof', or 'armroom6dof'")
             sys.exit()
 
-        save_agent_and_environment(dir_data_trial, my_agent, my_environment)
+        # save the agent, environment, and simulation on disk
+        my_agent.save(dir_data_trial)
+        my_environment.save(dir_data_trial)
+        save_simulation(dir_data_trial, args, trial)
 
         # run the three types of exploration: MEM, MM, MME
         generate_sensorimotor_data(my_agent, my_environment, "MEM", n_transitions, dir_data_trial, disp=display_exploration)
