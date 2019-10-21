@@ -11,9 +11,6 @@ import datetime
 import json
 
 # TODO: clean the dependencies (after removing flatland)
-# TODO: save an image of the environment with the data
-# todo: check what is missing in the local/venv pyrender
-
 
 def check_savability(destination, dictionary):
     """sanity check: try dumping a file on the disk and check it is not too large"""

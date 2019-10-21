@@ -44,8 +44,8 @@ class Environment:
     def generate_shift(self, k):
         return None
 
-    def display(self):
-        pass
+    def display(self, show):
+        return None
 
     def save(self, destination):
         pass
@@ -146,20 +146,29 @@ class GridWorld(Environment):
                                np.random.randint(-self.environment_size[1], self.environment_size[1], (k, 1))))
         return shift
 
-    def display(self):
+    def display(self, show=True):
         """
         Independently display the components of the sensations in the grid.
         ax - axe where to draw the surfaces
         """
-        fig = plt.figure()
-        ax = fig.gca(projection='3d')
-
+        fig = plt.figure(figsize=(12, 5))
+        ax0 = fig.add_subplot(131, projection="3d")
+        ax22 = [fig.add_subplot(232),
+                fig.add_subplot(233),
+                fig.add_subplot(235),
+                fig.add_subplot(236)]
         xx, yy = np.meshgrid(np.arange(self.environment_size[0]), np.arange(self.environment_size[1]))
 
         for i in range(self.n_sensations):
-            ax.plot_surface(xx, yy, self.pos2value_mapping[:, :, i], alpha=0.5)
+            ax0.plot_surface(xx, yy, self.pos2value_mapping[:, :, i], alpha=0.5)
 
-        plt.show()
+            img = ax22[i].imshow(self.pos2value_mapping[:, :, i])
+            fig.colorbar(img, ax=ax22[i])
+
+        if show:
+            plt.show()
+
+        return fig
 
     def save(self, destination):
         """
@@ -177,6 +186,11 @@ class GridWorld(Environment):
             # save the object on disk
             with open(destination + "/environment.pkl", "wb") as f:
                 cpickle.dump(self, f)
+
+            # save an image of the environment
+            fig = self.display(show=False)
+            fig.savefig(destination + "/environment_image.png")
+            plt.close(fig)
 
         except:
             print("ERROR: saving the environment in {} failed".format(destination))
@@ -280,7 +294,11 @@ class GQNRoom(Environment):
             shift = np.array(self.environment_size)/2 * np.random.rand(k, 2) - np.array(self.environment_size)/4
         return shift
 
-    def display(self, position=[8, 8, 8], orientation=(5, 4.7, 5), resolution=512):
+    def display(self, show=True):
+
+        camera_position = [8, 8, 8]
+        camera_direction = np.array((5, 4.7, 5))
+        resolution = 512
 
         # create the camera
         perspective_camera = gqn.pyrender.PerspectiveCamera(yfov=np.pi / 4)
@@ -297,11 +315,9 @@ class GQNRoom(Environment):
         self.scene.add_node(perspective_camera_node)
 
         # set the camera position
-        camera_position = position
         perspective_camera_node.translation = camera_position
 
         # set the camera orientation
-        camera_direction = np.array(orientation)
         yaw, pitch = tools.compute_yaw_and_pitch(camera_direction)
         perspective_camera_node.rotation = tools.generate_camera_quaternion(yaw, pitch)
 
@@ -315,7 +331,8 @@ class GQNRoom(Environment):
         ax.cla()
         ax.imshow(image, interpolation="none")
         ax.axis("off")
-        plt.show()
+        if show:
+            plt.show()
 
         return fig
 
@@ -340,6 +357,11 @@ class GQNRoom(Environment):
             # save the object on disk
             with open(destination + "/environment.pkl", "wb") as f:
                 cpickle.dump(self, f)
+
+            # save an image of the environment
+            fig = self.display(show=False)
+            fig.savefig(destination + "/environment_image.png")
+            plt.close(fig)
 
         except:
             print("ERROR: saving the environment in {} failed".format(destination))
