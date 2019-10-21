@@ -1,17 +1,16 @@
 import os
-import pickle
+import _pickle as cpickle
 from argparse import ArgumentParser
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib
-matplotlib.use("TkAgg")  # change the backend so that the figure can stay in the background
+matplotlib.use("TkAgg")  # backend so that the figure can stay in the background
 
 
-def display(file):
+def display(file, refresh=4):
     """
-    Displays the data from a display_data.pkl file created by the SensorimotorPredictiveNetwork.track_progress method.
+    Displays the data from a display_data.pkl file created by the SensorimotorPredictiveNetwork.track_progress() method.
     The figure refreshes every 5s, stays in the background but stays interactive.
-
     Argument:
         file - path to the display_data.pkl file
     """
@@ -23,7 +22,7 @@ def display(file):
     while True:
         if os.path.exists(file):
             break
-        plt.pause(5)
+        plt.pause(refresh)
 
     while True:
 
@@ -31,12 +30,12 @@ def display(file):
         try:
             with open(file, 'rb') as f:
                 try:
-                    data = pickle.load(f)
+                    data = cpickle.load(f)
                 except (IOError, EOFError):
-                    plt.pause(5)
+                    plt.pause(refresh)
                     continue
         except FileNotFoundError:
-            plt.pause(5)
+            plt.pause(refresh)
             continue
 
         # get useful dimensions
@@ -46,29 +45,15 @@ def display(file):
 
         # (re)open the figure if necessary
         if not plt.fignum_exists(1):
-
             fig = plt.figure(num=1, figsize=(16, 5))
-
             # create the axis for the motor space
-            if dim_motor in (1, 2):
-                ax1 = plt.subplot(141)
-            else:
-                ax1 = plt.subplot(141, projection='3d')
-
+            ax1 = plt.subplot(141) if dim_motor in (1, 2) else plt.subplot(141, projection='3d')
             # create the axis for the encoding space
-            if dim_encoding in (1, 2):
-                ax2 = plt.subplot(142)
-            else:
-                ax2 = plt.subplot(142, projection='3d')
-
+            ax2 = plt.subplot(142) if dim_motor in (1, 2) else plt.subplot(142, projection='3d')
             # create the axis for the egocentric position
             ax3 = plt.subplot(143)
-
             # create the axis for the sensory space
-            if dim_sensor in (1, 2):
-                ax4 = plt.subplot(144)
-            else:
-                ax4 = plt.subplot(144, projection='3d')
+            ax4 = plt.subplot(144) if dim_motor in (1, 2) else plt.subplot(144, projection='3d')
 
         # display the updated title
         plt.suptitle(file + " - epoch: " + str(data["epoch"]), fontsize=14)
@@ -77,26 +62,38 @@ def display(file):
         ax1.cla()
         ax1.set_title("motor space")
         if dim_motor == 1:
-            ax1.plot(data["motor"][:, 0], 0 * data["motor"][:, 0], 'bo')
+            ax1.plot(data["motor"][:, 0], 0 * data["motor"][:, 0], 'b.')
+            ax1.set_xlabel('$m_1$')
         elif dim_motor == 2:
-            ax1.plot(data["motor"][:, 0], data["motor"][:, 1], 'bo')
+            ax1.plot(data["motor"][:, 0], data["motor"][:, 1], 'b.')
+            ax1.set_xlabel('$m_1$')
+            ax1.set_ylabel('$m_2$')
         elif dim_motor >= 3:
-            ax1.plot(data["motor"][:, 0], data["motor"][:, 1], data["motor"][:, 2], 'bo')
+            ax1.plot(data["motor"][:, 0], data["motor"][:, 1], data["motor"][:, 2], 'b.')
+            ax1.set_xlabel('$m_1$')
+            ax1.set_ylabel('$m_2$')
+            ax1.set_zlabel('$m_3$')
         ax1.axis('equal')
 
         # plot the encoded motor configurations
         ax2.cla()
         ax2.set_title("encoding space")
         if dim_encoding == 1:
-            ax2.plot(data["encoded_motor"][:, 0], 0 * data["encoded_motor"][:, 0], 'rx')
+            ax2.plot(data["encoded_motor"][:, 0], 0 * data["encoded_motor"][:, 0], 'r.')
+            ax2.set_xlabel('$h_1$')
             ax2.text(0.05, 0.05, "topo_error_in_H={:.2e}".format(data["topo_error_in_H"]), transform=ax2.transAxes,
                      fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         elif dim_encoding == 2:
-            ax2.plot(data["encoded_motor"][:, 0], data["encoded_motor"][:, 1], 'rx')
+            ax2.plot(data["encoded_motor"][:, 0], data["encoded_motor"][:, 1], 'r.')
+            ax2.set_xlabel('$h_1$')
+            ax2.set_ylabel('$h_2$')
             ax2.text(0.05, 0.05, "topo_error_in_H={:.2e}".format(data["topo_error_in_H"]), transform=ax2.transAxes,
                      fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         elif dim_encoding >= 3:
-            ax2.plot(data["encoded_motor"][:, 0], data["encoded_motor"][:, 1], data["encoded_motor"][:, 2], 'rx')
+            ax2.plot(data["encoded_motor"][:, 0], data["encoded_motor"][:, 1], data["encoded_motor"][:, 2], 'r.')
+            ax2.set_xlabel('$h_1$')
+            ax2.set_ylabel('$h_2$')
+            ax2.set_zlabel('$h_3$')
             ax2.text(0.05, 0.05, 0.05, "topo_error_in_H={:.2e}".format(data["topo_error_in_H"]), transform=ax2.transAxes,
                      fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         ax2.axis('equal')
@@ -104,8 +101,13 @@ def display(file):
         # plot the sensor positions and the linear projection of the encoded motor configurations in the same space
         ax3.cla()
         ax3.set_title("sensor position")
-        ax3.plot(data["gt_pos"][:, 0], data["gt_pos"][:, 1], 'ko')
-        ax3.plot(data["projected_encoding"][:, 0], data["projected_encoding"][:, 1], 'rx')
+        # for k in range(data["gt_pos"].shape[0]):
+        #     ax3.plot((data["gt_pos"][k, 0], data["projected_encoding"][k, 0]),
+        #              (data["gt_pos"][k, 1], data["projected_encoding"][k, 1]), 'r-', lw=0.4)
+        ax3.plot(data["gt_pos"][:, 0], data["gt_pos"][:, 1], 'bo', mfc="none", ms=8)
+        ax3.plot(data["projected_encoding"][:, 0], data["projected_encoding"][:, 1], 'r.')
+        ax3.set_xlabel('$x$')
+        ax3.set_ylabel('$y$')
         ax3.text(0.05, 0.95, "topo_error_in_P={:.2e}\nmetric error={:.2e}".format(data["topo_error_in_P"], data["metric_error"]), transform=ax3.transAxes,
                  fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         ax3.axis('equal')
@@ -114,23 +116,33 @@ def display(file):
         ax4.cla()
         ax4.set_title("sensory space")
         if dim_sensor == 1:
-            ax4.plot(data["gt_sensation"][:, 0], 0 * data["gt_sensation"][:, 0], 'go')
-            ax4.plot(data["predicted_sensation"][:, 0], 0 * data["predicted_sensation"][:, 0], 'mx')
+            ax4.plot(data["gt_sensation"][:, 0], 0 * data["gt_sensation"][:, 0], 'o', color=[0, 0.5, 0], ms=8, mfc="none")
+            ax4.plot(data["predicted_sensation"][:, 0], 0 * data["predicted_sensation"][:, 0], 'm.')
+            ax4.set_xlabel('$s_1$')
+            ax4.text(0.05, 0.05, "loss={:.2e}".format(data["loss"]), transform=ax4.transAxes,
+                     fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         elif dim_sensor == 2:
-            ax4.plot(data["gt_sensation"][:, 0], data["gt_sensation"][:, 1], 'go')
-            ax4.plot(data["predicted_sensation"][:, 0], data["predicted_sensation"][:, 1], 'mx')
+            ax4.plot(data["gt_sensation"][:, 0], data["gt_sensation"][:, 1], 'o', color=[0, 0.5, 0], ms=8, mfc="none")
+            ax4.plot(data["predicted_sensation"][:, 0], data["predicted_sensation"][:, 1], 'm.')
+            ax4.set_xlabel('$s_1$')
+            ax4.set_ylabel('$s_2$')
+            ax4.text(0.05, 0.05, "loss={:.2e}".format(data["loss"]), transform=ax4.transAxes,
+                     fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         elif dim_sensor >= 3:
-            ax4.plot(data["gt_sensation"][:, 0], data["gt_sensation"][:, 1], data["gt_sensation"][:, 2], 'go')
-            ax4.plot(data["predicted_sensation"][:, 0], data["predicted_sensation"][:, 1], data["predicted_sensation"][:, 2], 'mx')
-        ax4.text(0.05, 0.05, 0.05, "loss={:.2e}".format(data["loss"]), transform=ax4.transAxes,
-                 fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
+            ax4.plot(data["gt_sensation"][:, 0], data["gt_sensation"][:, 1], data["gt_sensation"][:, 2], 'o', color=[0, 0.5, 0], ms=8, mfc="none")
+            ax4.plot(data["predicted_sensation"][:, 0], data["predicted_sensation"][:, 1], data["predicted_sensation"][:, 2], 'm.')
+            ax4.set_xlabel('$s_1$')
+            ax4.set_ylabel('$s_2$')
+            ax4.set_zlabel('$s_3$')
+            ax4.text(0.05, 0.05, 0.05, "loss={:.2e}".format(data["loss"]), transform=ax4.transAxes,
+                     fontsize=9, verticalalignment="top", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.2))
         ax4.axis('equal')
 
         # save the figure
         fig.savefig(os.path.dirname(file) + '/figure.png')
 
         # wait
-        plt.pause(5)
+        plt.pause(refresh)
 
 
 if __name__ == "__main__":

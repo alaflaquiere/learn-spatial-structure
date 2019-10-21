@@ -110,9 +110,9 @@ class GridExplorer(Agent):
         plt.plot(0, 0, 'ks')
         for i in range(motor.shape[0]):
             # get the state from the motor command
-            state_index = np.where(np.all(self.state2motor_mapping == motor[i, :]), axis=1)[0][0]
+            state_index = np.where(np.all(self.state2motor_mapping == motor[i, :], axis=1))[0][0]
             position = self.state2pos_mapping[state_index, :]
-            plt.plot(position[i, 0], position[i, 1], 'ro')
+            plt.plot(position[0], position[1], 'ro')
 
 
 class GridExplorer3dof(GridExplorer):

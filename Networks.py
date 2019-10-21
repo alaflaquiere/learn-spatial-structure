@@ -2,7 +2,7 @@ import os
 import time
 import tensorflow as tf
 import numpy as np
-import pickle
+import _pickle as cpickle
 from sklearn import linear_model
 from scipy.spatial.distance import pdist
 import platform
@@ -317,7 +317,7 @@ class SensorimotorPredictiveNetwork:
             if not os.path.exists(self.model_destination + "/display_progress"):
                 os.makedirs(self.model_destination + "/display_progress")
             with open(self.model_destination + "/display_progress/display_data.pkl", "wb") as file:
-                pickle.dump(display_dict, file)
+                cpickle.dump(display_dict, file)
 
         return fitted_p, metric_err, topo_err_in_P, topo_err_in_H, motor_encoding, predicted_sensation, gt_sensation
 
