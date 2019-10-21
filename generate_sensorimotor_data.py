@@ -12,6 +12,7 @@ import json
 
 # TODO: clean the dependencies (after removing flatland)
 
+
 def check_savability(destination, dictionary):
     """sanity check: try dumping a file on the disk and check it is not too large"""
     temp_name = "/".join([destination, "temp_dump.todelete"])
@@ -168,7 +169,7 @@ def save_simulation(directory, parse, trial):
                   "Destination": directory}
     try:
         with open(directory + "/generation_params.txt", "w") as f:
-            json.dump(dictionary, f, indent=1)
+            json.dump(dictionary, f, indent=2)
     except:
         print("ERROR: saving generation_params.txt in {} failed".format(directory))
         return False

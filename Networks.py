@@ -10,58 +10,61 @@ import subprocess
 import json
 
 
-class MLP:
+def mlp(input_net, layers_sizes, activation=tf.nn.selu):
     """
-    A simple fully connected MLP class with no activation function on the last layer.
-    (reuse is set to tf.AUTO_REUSE in order to allow siamese MLPs.)
-
     Parameters:
         input_net - node used as input to the MLP
         layers_sizes - list of the sizes of the successives layers of the MLP
         activation - activation function used in the MLP
-
-    Attribute:
-        output - output node of the MLP
     """
-
-    def __init__(self, input_net, layers_sizes, activation=tf.nn.selu):
-
-        self.type = "MLP"
-
-        current_input = input_net
-        for layer_index, nbr_units in enumerate(layers_sizes[0:-1]):
-            current_input = tf.layers.dense(inputs=current_input,
-                                            units=nbr_units,
-                                            activation=activation,
-                                            name="layer"+str(layer_index))
-        self.output = tf.layers.dense(inputs=current_input, units=layers_sizes[-1], activation=None, name='layerend')
+    current_input = input_net
+    for layer_index, nbr_units in enumerate(layers_sizes[0:-1]):
+        current_input = tf.layers.dense(inputs=current_input,
+                                        units=nbr_units,
+                                        activation=activation,
+                                        name="layer" + str(layer_index))
+    output = tf.layers.dense(inputs=current_input, units=layers_sizes[-1], activation=None, name='layerend')
+    return output
 
 
 class SensorimotorPredictiveNetwork:
     """
     Network to perform sensory prediction based on a current motor configuration, a current sensory input, and a future motor configuration.
     Both the motor configurations are encoded using a single (siamese) module.
-
     Parameters:
         dim_motor - dimension of the motor configuration
         dim_sensor - dimension of the sensory input
         dim_enc - dimension of the output of the motor encoding module
-        dest_model - directory in which to save the model and temporary files
+        encoding_layers_size - sizes of the successive layers of the motor encoding module
+        predictive_layers_size - sizes of the successive layers of the sensory predictive module
+        act_fn - activation function
+        learning_rate_param - parameters for the evolution of the learning rate
+        batch_size - size of the batch sent at each iteration
+        model_destination - directory in which to save the model and temporary files
     """
 
-    def __init__(self, dim_motor=3, dim_sensor=4, dim_enc=3, dest_model="model/trained_model", act_fn="selu"):
+    def __init__(self,
+                 dim_motor=3,
+                 dim_sensor=4,
+                 dim_enc=3,
+                 encoding_layers_size=[150, 100, 50],
+                 predictive_layers_size=[200, 150, 100],
+                 act_fn="selu",
+                 learning_rate_param=[1e-3, 1e-5, 8e4, 1],
+                 batch_size=100,
+                 model_destination="model/trained"):
 
         # set attributes
         self.type = "SensorimotorPredictiveNetwork"
-        self.dim_enc = dim_enc
-        self.encoding_layers_size = [150, 100, 50]
-        self.predictive_layers_size = [200, 150, 100]
-        self.activation = act_fn
-        self.learning_rate_param = [1e-3, 1e-5, 8e4, 1]
-        self.batch_size = 100
         self.dim_motor = dim_motor
         self.dim_sensor = dim_sensor
-        self.dest_model = dest_model
+        self.dim_enc = dim_enc
+        self.encoding_layers_size = encoding_layers_size
+        self.predictive_layers_size = predictive_layers_size
+        self.activation = act_fn
+        self.learning_rate_param = learning_rate_param
+        self.batch_size = batch_size
+        self.model_destination = model_destination
         self.lin_reg_model = linear_model.LinearRegression(fit_intercept=True)
 
         # get the activation function (a temporary string is used to simply log the class attributes in self.log())
@@ -70,7 +73,7 @@ class SensorimotorPredictiveNetwork:
         elif self.activation == "relu":
             activation = tf.nn.relu
         else:
-            print("WARNING: Incorrect activation function - tf.nn.selu is used instead")
+            print("WARNING: Incorrect activation function ['selu' or 'relu'] - tf.nn.selu is used instead")
             activation = tf.nn.selu
 
         # reset the default graph
@@ -92,24 +95,24 @@ class SensorimotorPredictiveNetwork:
         with tf.variable_scope("motor_encoding", reuse=tf.AUTO_REUSE):
 
             # create the first copy of the encoding module
-            self.encode_module_t = MLP(input_net=self.motor_t,
-                                       layers_sizes=self.encoding_layers_size + [self.dim_enc],
-                                       activation=activation)
+            self.output_encode_module_t = mlp(input_net=self.motor_t,
+                                              layers_sizes=self.encoding_layers_size + [self.dim_enc],
+                                              activation=activation)
 
             # create the second copy of the encoding module
-            self.encode_module_tp = MLP(input_net=self.motor_tp,
-                                        layers_sizes=self.encoding_layers_size + [self.dim_enc],
-                                        activation=activation)
+            self.output_encode_module_tp = mlp(input_net=self.motor_tp,
+                                               layers_sizes=self.encoding_layers_size + [self.dim_enc],
+                                               activation=activation)
 
         # concatenate the motor encodings with the sensory input
-        concatenation = tf.concat([self.encode_module_t.output, self.encode_module_tp.output, self.sensor_t], axis=1, name='concat')
+        concatenation = tf.concat([self.output_encode_module_t, self.output_encode_module_tp, self.sensor_t], axis=1, name='concat')
 
         # define the predictive module
         with tf.variable_scope("sensory_prediction", reuse=tf.AUTO_REUSE):
-            self.prediction_module = MLP(input_net=concatenation, layers_sizes=self.predictive_layers_size + [self.dim_sensor])
+            self.output_prediction_module = mlp(input_net=concatenation, layers_sizes=self.predictive_layers_size + [self.dim_sensor])
 
         # define the loss
-        loss = tf.reduce_sum(tf.squared_difference(self.prediction_module.output, self.sensor_tp), axis=1)
+        loss = tf.reduce_sum(tf.squared_difference(self.output_prediction_module, self.sensor_tp), axis=1)
         self.loss = tf.reduce_mean(loss, axis=0)
 
         # define the learning rate
@@ -129,7 +132,7 @@ class SensorimotorPredictiveNetwork:
         tf.summary.scalar("learning_rate", self.learning_rate)
         self.merged_summaries = tf.summary.merge_all()
         self.graph = tf.get_default_graph()  # get the default graph
-        self.summaries_writer = tf.summary.FileWriter(self.dest_model + '/tb_logs', self.graph)
+        self.summaries_writer = tf.summary.FileWriter(self.model_destination + '/tb_logs', self.graph)
 
         # create a saver
         self.saver = tf.train.Saver()
@@ -170,10 +173,10 @@ class SensorimotorPredictiveNetwork:
         # open the display process in parallel if necessary
         if disp:
             if platform.system() == 'Windows':
-                command = "python display_progress.py -f " + self.dest_model + "/display_progress/display_data.pkl"
+                command = "python display_progress.py -f " + self.model_destination + "/display_progress/display_data.pkl"
                 display_proc = subprocess.Popen(command)
             elif platform.system() == 'Linux':
-                command = "exec python3 display_progress.py -f " + self.dest_model + "/display_progress/display_data.pkl"
+                command = "exec python3 display_progress.py -f " + self.model_destination + "/display_progress/display_data.pkl"
                 display_proc = subprocess.Popen([command], shell=True)
 
         # open a session
@@ -218,12 +221,10 @@ class SensorimotorPredictiveNetwork:
         Compute the affine transformation: target_set = origin_set * coef_ + intercept_
         Estimate the error between the metrics of target_set and of the projection of origin_set in the target_set space.
         This error can be weighted to focus more or less on small distances in the target space.
-
         Inputs:
             target_set - (k, dim_target_space) array
             origin_set - (k, dim_origin_space) array
             weight - relative weight of smaller distances relative to large distances (weight >= 0, with weight = 0 for a uniform weighting)
-
         Returns:
             weighted_error - mean metric error between the projected set and the target_set
             fitted - linear projection of origin_set into the target space
@@ -247,12 +248,10 @@ class SensorimotorPredictiveNetwork:
     def compute_topology_error_in_H(self, p_set, h_set, weight=10):
         """
         Estimates how much the topology of P_set is respected by H_set.
-
         Inputs:
             p_set - (k, dim_P) array
             h_set - (k, dim_H) array
             weight - relative weight of smaller P distances relative to large distances (weight >= 0, with weight = 0 for a uniform weighting)
-
         Returns:
             weighted_error - mean topological dissimilarity
         """
@@ -272,31 +271,31 @@ class SensorimotorPredictiveNetwork:
         """
 
         # get the encoding of the regular motor sampling
-        motor_encoding = self.sess.run(self.encode_module_t.output, feed_dict={self.motor_t: data["grid_motor"]})
+        motor_encoding = self.sess.run(self.output_encode_module_t, feed_dict={self.motor_t: data["grid_motor"]})
 
         # compute the dissimilarities and affine projections
         metric_err, fitted_p = self.compute_weighted_affine_errors_in_P(data["grid_pos"], motor_encoding, weight=0)
         topo_err_in_P, _ = self.compute_weighted_affine_errors_in_P(data["grid_pos"], motor_encoding, weight=10)
-        topo_err_in_H = self.compute_topology_error_in_H(data["grid_pos"], motor_encoding, weight=50)  #10
+        topo_err_in_H = self.compute_topology_error_in_H(data["grid_pos"], motor_encoding, weight=50)
 
         # get a random batch to evaluate the prediction error (without replace significantly increases computation time)
         batch_indexes = np.random.choice(data["motor_t"].shape[0], self.batch_size, replace=True)
 
         # perform sensory prediction and process the summaries
-        curr_loss, curr_summaries, predicted_sensation, gt_sensation = self.sess.run([self.loss,
-                                                                                     self.merged_summaries,
-                                                                                     self.prediction_module.output,
-                                                                                     self.sensor_tp],
-                                                                                     feed_dict={self.motor_t: data["motor_t"][batch_indexes, :],
-                                                                                                self.sensor_t: data["sensor_t"][batch_indexes, :],
-                                                                                                self.motor_tp: data["motor_tp"][batch_indexes, :],
-                                                                                                self.sensor_tp: data["sensor_tp"][batch_indexes, :],
-                                                                                                self.metric_error: metric_err,
-                                                                                                self.topology_error_in_P: topo_err_in_P,
-                                                                                                self.topology_error_in_H: topo_err_in_H})
+        curr_loss, curr_summaries, predicted_sensation, gt_sensation, curr_epoch = self.sess.run([self.loss,
+                                                                                                  self.merged_summaries,
+                                                                                                  self.output_prediction_module,
+                                                                                                  self.sensor_tp,
+                                                                                                  self.global_step],
+                                                                                                 feed_dict={self.motor_t: data["motor_t"][batch_indexes, :],
+                                                                                                            self.sensor_t: data["sensor_t"][batch_indexes, :],
+                                                                                                            self.motor_tp: data["motor_tp"][batch_indexes, :],
+                                                                                                            self.sensor_tp: data["sensor_tp"][batch_indexes, :],
+                                                                                                            self.metric_error: metric_err,
+                                                                                                            self.topology_error_in_P: topo_err_in_P,
+                                                                                                            self.topology_error_in_H: topo_err_in_H})
 
         # save the summaries
-        curr_epoch = self.sess.run(self.global_step)
         self.summaries_writer.add_summary(curr_summaries, curr_epoch)
 
         if disp:
@@ -315,9 +314,9 @@ class SensorimotorPredictiveNetwork:
                             }
 
             # write display_dict on the disk
-            if not os.path.exists(self.dest_model + "/display_progress"):
-                os.makedirs(self.dest_model + "/display_progress")
-            with open(self.dest_model + "/display_progress/display_data.pkl", "wb") as file:
+            if not os.path.exists(self.model_destination + "/display_progress"):
+                os.makedirs(self.model_destination + "/display_progress")
+            with open(self.model_destination + "/display_progress/display_data.pkl", "wb") as file:
                 pickle.dump(display_dict, file)
 
         return fitted_p, metric_err, topo_err_in_P, topo_err_in_H, motor_encoding, predicted_sensation, gt_sensation
@@ -326,28 +325,28 @@ class SensorimotorPredictiveNetwork:
         """
         Saves the network in dir_model/model.
         """
-
         # destination where to save the model
-        dest = self.dest_model + '/model'
-
+        dest = self.model_destination + '/model'
         # create the folder if necessary
         if not os.path.exists(dest):
             os.makedirs(dest)
-
         # save the model
         self.saver.save(self.sess, dest + '/model.ckpt')
 
-    def log(self, dest_log):
+    def save(self, destination):
         """
         Writes the network's attributes to the disk.
         """
+        try:
+            serializable_dict = self.__dict__.copy()
+            for key, value in self.__dict__.items():
+                if type(value) is np.ndarray:
+                    serializable_dict[key] = value.tolist()
+                elif type(value) not in (list, int, str):
+                    del(serializable_dict[key])
+            with open(destination + "/network_params.txt", "w") as f:
+                json.dump(serializable_dict, f, indent=2, sort_keys=True)
 
-        serializable_dict = self.__dict__.copy()
-        for key, value in self.__dict__.items():
-            if type(value) is np.ndarray:
-                serializable_dict[key] = value.tolist()
-            elif type(value) not in (list, int, str):
-                del(serializable_dict[key])
-
-        with open(dest_log, "w") as file:
-            json.dump(serializable_dict, file, indent=1)
+        except:
+            print("ERROR: saving the network parameters in {} failed".format(destination))
+            return False
