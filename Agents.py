@@ -53,8 +53,8 @@ class Agent:
             for key, value in serializable_dict.items():
                 if type(value) is np.ndarray:
                     serializable_dict[key] = value.tolist()
-            with open(destination + "/agent_params.txt", "w") as file:
-                json.dump(serializable_dict, file, indent=1)
+            with open(destination + "/agent_params.txt", "w") as f:
+                json.dump(serializable_dict, f, indent=2, sort_keys=True)
 
             # save the object on disk
             with open(destination + "/agent.pkl", "wb") as f:
@@ -128,10 +128,9 @@ class GridExplorer3dof(GridExplorer):
 
     def __init__(self, number_motors=3, resolution=5):
         super().__init__(type_agent="GridExplorer3dof", n_motors=number_motors, size_regular_grid=resolution**number_motors)
-        self.state2motor_mapping, self.state2pos_mapping = self.create_discrete_mapping_3dmotor_to_2dpos(reso=resolution, n_motors=3)
+        self.state2motor_mapping, self.state2pos_mapping = self.create_discrete_mapping_3dmotor_to_2dpos(reso=resolution)
 
-    @staticmethod
-    def create_discrete_mapping_3dmotor_to_2dpos(reso, n_motors):
+    def create_discrete_mapping_3dmotor_to_2dpos(self, reso):
         """
         Create a random mapping from motor configurations to egocentric positions of the sensor.
         The mapping is discrete, such that a limited set of motor configurations is associated with a limited set of sensors positions (of smaller
@@ -144,7 +143,7 @@ class GridExplorer3dof(GridExplorer):
         """
 
         # scan all possible states
-        coordinates = np.array(np.meshgrid(*list([np.linspace(0, 1, reso)]) * n_motors))
+        coordinates = np.array(np.meshgrid(*list([np.linspace(0, 1, reso)]) * self.n_motors))
 
         # reshape the coordinates into matrix of size (reso**3, 3)
         mapping = np.array([coord.reshape((-1)) for coord in coordinates]).T
@@ -177,10 +176,9 @@ class GridExplorer6dof(GridExplorer):
 
     def __init__(self, number_motors=6, resolution=4):
         super().__init__(type_agent="GridExplorer3dof", n_motors=number_motors, size_regular_grid=resolution**number_motors)
-        self.state2motor_mapping, self.state2pos_mapping = self.create_discrete_mapping_6dmotor_to_2dpos(reso=resolution, n_motors=number_motors)
+        self.state2motor_mapping, self.state2pos_mapping = self.create_discrete_mapping_6dmotor_to_2dpos(reso=resolution)
 
-    @staticmethod
-    def create_discrete_mapping_6dmotor_to_2dpos(reso, n_motors):
+    def create_discrete_mapping_6dmotor_to_2dpos(self, reso):
         """
         Create a random mapping from motor configurations to egocentric positions of the sensor.
         The mapping is discrete, such that a limited set of motor configurations is associated with a limited set of sensors positions (of smaller
@@ -192,13 +190,13 @@ class GridExplorer6dof(GridExplorer):
         """
 
         # scan all possible states
-        coordinates = np.array(np.meshgrid(*list([np.linspace(0, 1, reso)]) * n_motors))
+        coordinates = np.array(np.meshgrid(*list([np.linspace(0, 1, reso)]) * self.n_motors))
 
         # reshape the coordinates into matrix of size (reso**n_motors, n_motors)
         mapping = np.array([coord.reshape((-1)) for coord in coordinates]).T
 
         # mixing matrix
-        mixing_matrix = 4 * np.random.rand(n_motors, n_motors) - 2
+        mixing_matrix = 4 * np.random.rand(self.n_motors, self.n_motors) - 2
         state2motor_mapping = np.matmul(mapping, np.linalg.inv(mixing_matrix))
 
         # normalization of the values into [0, 1] for easy application of the non-linearities
