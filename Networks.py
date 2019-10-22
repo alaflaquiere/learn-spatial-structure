@@ -190,7 +190,7 @@ class SensorimotorPredictiveNetwork:
             t0 = time.time()
 
             # initial evaluation of the network
-            fitted_p, metric_error, topo_error_in_P, topo_error_in_H, encoding, prediction, sensation = self.track_progress(data, disp)
+            fitted_p, metric_error, topo_error_in_P, topo_error_in_H, encoding, prediction, sensation = self.track_progress(data)
 
             print("epoch: {:6d}, loss: _, metric error: {:.2e}, topo error in P: {:.2e}, topo error in H: {:.2e} - ({:.2f} sec)"
                   .format(epoch, metric_error, topo_error_in_P, topo_error_in_H, time.time() - t0))
@@ -201,7 +201,7 @@ class SensorimotorPredictiveNetwork:
                 epoch, current_loss = self.train(data=data, number_epochs=1000)
 
                 # get tracked variables and send them to Tensorboard
-                fitted_p, metric_error, topo_error_in_P, topo_error_in_H, encoding, prediction, sensation = self.track_progress(data, disp)
+                fitted_p, metric_error, topo_error_in_P, topo_error_in_H, encoding, prediction, sensation = self.track_progress(data)
 
                 print("epoch: {:6d}, loss: {:.2e}, metric error: {:.2e}, topo error in P: {:.2e}, topo error in H: {:.2e} - ({:.2f} sec)"
                       .format(epoch, current_loss, metric_error, topo_error_in_P, topo_error_in_H, time.time() - t0))
@@ -265,9 +265,9 @@ class SensorimotorPredictiveNetwork:
 
         return weighted_error
 
-    def track_progress(self, data, disp):
+    def track_progress(self, data):
         """
-        Computes and saves the variables tracked via Tensorboard + save the data to display by display_progress.py if disp=True.
+        Computes and saves the variables tracked via Tensorboard + save the data to display by display_progress.py
         """
 
         # get the encoding of the regular motor sampling
@@ -298,26 +298,25 @@ class SensorimotorPredictiveNetwork:
         # save the summaries
         self.summaries_writer.add_summary(curr_summaries, curr_epoch)
 
-        if disp:
-            # save the data to display by display_progress.py
-            display_dict = {"epoch": curr_epoch,
-                            "loss": curr_loss,
-                            "motor": data["grid_motor"],
-                            "gt_pos": data["grid_pos"],
-                            "encoded_motor": motor_encoding,
-                            "projected_encoding": fitted_p,
-                            "metric_error": metric_err,
-                            "topo_error_in_P": topo_err_in_P,
-                            "topo_error_in_H": topo_err_in_H,
-                            "gt_sensation": gt_sensation,
-                            "predicted_sensation": predicted_sensation
-                            }
+        # save the data to display by display_progress.py
+        display_dict = {"epoch": curr_epoch,
+                        "loss": curr_loss,
+                        "motor": data["grid_motor"],
+                        "gt_pos": data["grid_pos"],
+                        "encoded_motor": motor_encoding,
+                        "projected_encoding": fitted_p,
+                        "metric_error": metric_err,
+                        "topo_error_in_P": topo_err_in_P,
+                        "topo_error_in_H": topo_err_in_H,
+                        "gt_sensation": gt_sensation,
+                        "predicted_sensation": predicted_sensation
+                        }
 
-            # write display_dict on the disk
-            if not os.path.exists(self.model_destination + "/display_progress"):
-                os.makedirs(self.model_destination + "/display_progress")
-            with open(self.model_destination + "/display_progress/display_data.pkl", "wb") as file:
-                cpickle.dump(display_dict, file)
+        # write display_dict on the disk
+        if not os.path.exists(self.model_destination + "/display_progress"):
+            os.makedirs(self.model_destination + "/display_progress")
+        with open(self.model_destination + "/display_progress/display_data.pkl", "wb") as file:
+            cpickle.dump(display_dict, file)
 
         return fitted_p, metric_err, topo_err_in_P, topo_err_in_H, motor_encoding, predicted_sensation, gt_sensation
 

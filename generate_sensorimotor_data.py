@@ -1,14 +1,12 @@
-import numpy as np
-import os
-import sys
-import shutil
 import Agents
 import Environments
-import _pickle as cpickle
 from argparse import ArgumentParser
 import uuid
 import datetime
 import json
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from tools import *
 
 # TODO: clean the dependencies (after removing flatland)
 
@@ -51,19 +49,6 @@ def save_dictionary(destination, dictionary, filename):
         print("ERROR: saving the data to disk failed (impossible to reload it")
         return False
 
-    return True
-
-
-def create_directory(directory, safe=True):
-    """Create the directory or ask permission to overwrite it if it already exists"""
-    if os.path.exists(directory) and safe:
-        ans = input("> WARNING: The folder {} already exists; do you want to overwrite its content? [y,n]: ".format(directory))
-        if ans in ["y", "Y", "yes", "Yes", "YES"]:
-            shutil.rmtree(directory)
-        else:
-            print("exiting the program")
-            sys.exit()
-    os.makedirs(directory)
     return True
 
 
@@ -176,6 +161,77 @@ def save_simulation(directory, parse, trial):
     return True
 
 
+def display_samples(dir_data, run_index, explo_type, n=24):
+    """
+    Display random samples from a dataset.
+    Inputs:
+        dir_data - directory of the dataset
+        explo_type - type of exploration to consider
+        run_index - index of sub-dataset to plot from
+        n - number of random samples to display
+    """
+
+    # check the data_directory exists
+    check_directory_exists(dir_data)
+
+    data_directory = dir_data + "/dataset{:03}".format(run_index)
+    data_file = data_directory + "/dataset_" + explo_type + ".pkl"
+
+    # load data
+    transitions = load_sensorimotor_transitions(data_file, n_transitions=n)
+
+    # check the type of environment that generated the data
+    with open(data_directory + "/environment_params.txt", "r") as f:
+        dictionary = json.load(f)
+    type_env = dictionary["type"]
+    n_sensations = dictionary["n_sensations"]
+
+    fig = plt.figure(data_file, figsize=(15, 1))
+
+    if type_env == "GridWorld":
+
+        transitions = normalize_data(transitions)
+
+        for i in range(n):
+            # create axes
+            ax = fig.add_subplot(1, n, i + 1)
+
+            # draw a sample
+            index = np.random.randint(n_sensations)
+            vector = transitions["sensor_t"][index, :]
+
+            # reshape as an image
+            image = 0.5 * np.reshape(vector, (-1, 1)) + 0.5
+
+            # display
+            ax.imshow(image)
+            ax.axis("off")
+
+    elif type_env == "3dRoom":
+
+        for i in range(n):
+
+            # create axes
+            ax = fig.add_subplot(1, n, i+1)
+
+            # draw a sample
+            index = np.random.randint(n_sensations)
+            image = transitions["sensor_t"][index, :]
+
+            # reshape as an image
+            image = np.reshape(image, (np.sqrt(np.size(image) / 3),
+                                       np.sqrt(np.size(image) / 3),
+                                       3)) / 255
+
+            # display
+            ax.imshow(image)
+            ax.axis("off")
+
+    plt.show()
+
+    return fig
+
+
 if __name__ == "__main__":
 
     # parser
@@ -201,7 +257,7 @@ if __name__ == "__main__":
     for trial in range(n_runs):
 
         # subdirectory for the trial
-        dir_data_trial = "/".join([dir_data, "dataset" + str(trial)])
+        dir_data_trial = "/".join([dir_data, "dataset{:03}".format(trial)])
 
         print("[ENVIRONMENT {} >> data saved in {}]".format(trial, dir_data_trial))
 
@@ -238,5 +294,13 @@ if __name__ == "__main__":
         generate_sensorimotor_data(my_agent, my_environment, "MEM", n_transitions, dir_data_trial, disp=display_exploration)
         generate_sensorimotor_data(my_agent, my_environment, "MM",  n_transitions, dir_data_trial, disp=display_exploration)
         generate_sensorimotor_data(my_agent, my_environment, "MME", n_transitions, dir_data_trial, disp=display_exploration)
+
+    plt.ion()
+
+    index_subdataset = 0
+    for exploration_type in ["MEM", "MM", "MME"]:
+        fh = display_samples(dir_data, index_subdataset, exploration_type, n=24)
+        fh.savefig(dir_data + "/sensory_samples_" + exploration_type + "_dataset" + str(index_subdataset) + ".png")
+        fh.savefig(dir_data + "/sensory_samples_" + exploration_type + "_dataset" + str(index_subdataset) + ".svg")
 
     input("Press any key to exit the program.")

@@ -43,7 +43,7 @@ def display(file, refresh=4):
         dim_sensor = data["gt_sensation"].shape[1]
         dim_encoding = data["encoded_motor"].shape[1]
 
-        # (re)open the figure if necessary
+        # open the figure if necessary
         if not plt.fignum_exists(1):
             fig = plt.figure(num=1, figsize=(16, 5))
             # create the axis for the motor space

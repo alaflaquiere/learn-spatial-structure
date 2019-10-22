@@ -1,81 +1,9 @@
-import os
-import sys
-import numpy as np
-import _pickle as cpickle
 import json
 import glob
 import datetime
 from Networks import SensorimotorPredictiveNetwork
 from argparse import ArgumentParser
-from generate_sensorimotor_data import create_directory
-
-
-def load_sensorimotor_transitions(data_directory, n_transitions=None):
-    """
-    Loads sensorimotor transitions from a file created by generate_sensorimotor_data.py.
-    Returns the data in a dictionary.
-    """
-
-    # check dir_data
-    if not os.path.exists(data_directory):
-        print("ERROR: the dataset file {} doesn't exist.".format(data_directory))
-        return
-
-    print("loading sensorimotor data from {}...".format(data_directory))
-
-    with open(data_directory, 'rb') as f:
-        data = cpickle.load(f)
-
-    # identify potential NaN entries
-    to_discard = np.argwhere(np.logical_or(np.isnan(data["sensor_t"][:, 0]), np.isnan(data["sensor_tp"][:, 0])))
-
-    # remove NaN entries
-    for i in ["motor_t", "sensor_t", "shift_t", "motor_tp", "sensor_tp", "shift_tp"]:
-        data[i] = np.delete(data[i], to_discard, axis=0)
-
-    # get the number of transitions
-    k = data["motor_t"].shape[0]
-
-    # reduce the size of the dataset if necessary
-    if n_transitions is None:
-        n_transitions = k
-    elif n_transitions < k:
-        to_discard = np.arange(n_transitions, k)
-        for i in ["motor_t", "sensor_t", "shift_t", "motor_tp", "sensor_tp", "shift_tp"]:
-            data[i] = np.delete(data[i], to_discard, axis=0)
-    else:
-        n_transitions = k
-        print("Warning: the requested number of data is greater than the size of the dataset.")
-
-    print("loaded {} sensorimotor data".format(n_transitions))
-
-    return data
-
-
-def normalize_data(data):
-    """
-    Normalize the data such that the motor and sensor components are in [-1, 1]
-    We don't normalize the positions of the sensor and shift of the environment, to keep the real scale of the external space.
-    """
-
-    # get the min/max of the motor configurations, sensations, and shifts
-    motor_min = np.nanmin(data["motor_t"], axis=0)
-    motor_max = np.nanmax(data["motor_t"], axis=0)
-    #
-    sensor_min = np.nanmin(data["sensor_t"], axis=0)
-    sensor_max = np.nanmax(data["sensor_t"], axis=0)
-
-    # normalize the data in [-1, 1]
-    data["motor_t"] = 2 * (data["motor_t"] - motor_min) / (motor_max - motor_min) - 1
-    data["motor_tp"] = 2 * (data["motor_tp"] - motor_min) / (motor_max - motor_min) - 1
-    #
-    data["sensor_t"] = 2 * (data["sensor_t"] - sensor_min) / (sensor_max - sensor_min) - 1
-    data["sensor_tp"] = 2 * (data["sensor_tp"] - sensor_min) / (sensor_max - sensor_min) - 1
-
-    # normalize the grid of motor configurations
-    data["grid_motor"] = 2 * (data["grid_motor"] - motor_min) / (motor_max - motor_min) - 1
-
-    return data
+from tools import *
 
 
 def save_training(directory, path_data, run, type_simu, n_simus, n_ep):
@@ -172,7 +100,7 @@ if __name__ == "__main__":
         for simu_type in simu_types:
 
             # get the correct data folder and file name
-            sub_dir_data = "{}/dataset{}".format(dir_data, trial % len(subfolder_list))
+            sub_dir_data = "{}/dataset{:03}".format(dir_data, trial % len(subfolder_list))
             filename = "{}/dataset_{}.pkl".format(sub_dir_data, simu_type)
 
             print("[{} EXPLORATION - (dataset: {})]".format(simu_type, filename))
@@ -186,7 +114,7 @@ if __name__ == "__main__":
             transitions = normalize_data(transitions)
 
             # create the trial subdirectory
-            dir_model_trial = "/".join([dir_model, simu_type, "run" + str(trial)])
+            dir_model_trial = "/".join([dir_model, simu_type, "run" + "{:03}".format(trial)])
             create_directory(dir_model_trial, safe=False)
 
             # create the network
@@ -196,7 +124,7 @@ if __name__ == "__main__":
             network.save(dir_model_trial)
 
             # copy generation_params from the source dataset
-#            save_training(dir_model_trial, sub_dir_data, trial, simu_type, n_simulations, n_epochs)
+            save_training(dir_model_trial, sub_dir_data, trial, simu_type, n_simulations, n_epochs)
 
             # train the network
             network.full_train(n_epochs=n_epochs, data=transitions, disp=display_progress)

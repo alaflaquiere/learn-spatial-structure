@@ -180,7 +180,7 @@ class GridWorld(Environment):
             for key, value in serializable_dict.items():
                 if type(value) is np.ndarray:
                     serializable_dict[key] = value.tolist()
-            with open(destination + "/environemnt_params.txt", "w") as f:
+            with open(destination + "/environment_params.txt", "w") as f:
                 json.dump(serializable_dict, f, indent=2, sort_keys=True)
 
             # save the object on disk
