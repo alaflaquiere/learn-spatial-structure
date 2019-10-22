@@ -220,8 +220,8 @@ def display_samples(dir_data, run_index, explo_type, n=24):
             image = transitions["sensor_t"][index, :]
 
             # reshape as an image
-            image = np.reshape(image, (np.sqrt(np.size(image) / 3),
-                                       np.sqrt(np.size(image) / 3),
+            image = np.reshape(image, (int(np.sqrt(np.size(image) / 3)),
+                                       int(np.sqrt(np.size(image) / 3)),
                                        3)) / 255
 
             # display
