@@ -5,8 +5,6 @@ from Networks import SensorimotorPredictiveNetwork
 from argparse import ArgumentParser
 from tools import *
 
-# TODO store current git commit hashtag
-
 
 def save_training(directory, path_data, run, type_simu, n_simus, n_ep):
     """save a UUID for the simulation"""
@@ -21,7 +19,8 @@ def save_training(directory, path_data, run, type_simu, n_simus, n_ep):
                   "Nbr runs": n_simus,
                   "Run": run,
                   "Destination": directory,
-                  "Nbr epochs": n_ep}
+                  "Nbr epochs": n_ep,
+                  "code commit hash": get_git_hash()}
     try:
         with open(directory + "/training_params.txt", "w") as f:
             json.dump(dictionary, f, indent=2)

@@ -3,6 +3,7 @@ import os
 import sys
 import numpy as np
 import _pickle as cpickle
+import subprocess
 
 
 def check_directory_exists(directory):
@@ -22,6 +23,11 @@ def create_directory(directory, safe=True):
             sys.exit()
     os.makedirs(directory)
     return True
+
+
+def get_git_hash():
+    binary_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip()
+    return binary_hash.decode("utf-8")
 
 
 def load_sensorimotor_transitions(data_directory, n_transitions=None):

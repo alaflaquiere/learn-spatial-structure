@@ -9,7 +9,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from tools import *
 
 # TODO: clean the dependencies (after removing flatland)
-# TODO store current git commit hashtag
 # TODO add sensory noise
 
 
@@ -153,7 +152,8 @@ def save_simulation(directory, parse, trial):
                   "Type simulation": parse.type_simu,
                   "Nbr runs": parse.n_runs,
                   "Trial": trial,
-                  "Destination": directory}
+                  "Destination": directory,
+                  "code commit hash": get_git_hash()}
     try:
         with open(directory + "/generation_params.txt", "w") as f:
             json.dump(dictionary, f, indent=2)
