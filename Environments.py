@@ -48,7 +48,35 @@ class Environment:
         return None
 
     def save(self, destination):
-        pass
+        """
+         Writes the environment's attributes to the disk.
+         """
+
+        try:
+            serializable_dict = self.__dict__.copy()
+            for key, value in self.__dict__.items():
+                # keep only the ints, tuples, lists, and ndarrays
+                if type(value) not in (str, int, tuple, list, np.ndarray):
+                    del serializable_dict[key]
+                    continue
+                # make the ndarrays serializable
+                if type(value) is np.ndarray:
+                    serializable_dict[key] = value.tolist()
+            with open(destination + "/environment_params.txt", "w") as file:
+                json.dump(serializable_dict, file, indent=1)
+
+            # save the object on disk
+            with open(destination + "/environment.pkl", "wb") as f:
+                cpickle.dump(self, f)
+
+            # save an image of the environment
+            fig = self.display(show=False)
+            fig.savefig(destination + "/environment_image.png")
+            plt.close(fig)
+
+        except:
+            print("ERROR: saving the environment in {} failed".format(destination))
+            return False
 
 
 class GridWorld(Environment):
@@ -169,32 +197,6 @@ class GridWorld(Environment):
             plt.show()
 
         return fig
-
-    def save(self, destination):
-        """
-        Save  the environment to the disk.
-        """
-
-        try:
-            serializable_dict = self.__dict__.copy()
-            for key, value in serializable_dict.items():
-                if type(value) is np.ndarray:
-                    serializable_dict[key] = value.tolist()
-            with open(destination + "/environment_params.txt", "w") as f:
-                json.dump(serializable_dict, f, indent=2, sort_keys=True)
-
-            # save the object on disk
-            with open(destination + "/environment.pkl", "wb") as f:
-                cpickle.dump(self, f)
-
-            # save an image of the environment
-            fig = self.display(show=False)
-            fig.savefig(destination + "/environment_image.png")
-            plt.close(fig)
-
-        except:
-            print("ERROR: saving the environment in {} failed".format(destination))
-            return False
 
 
 class GQNRoom(Environment):
@@ -335,34 +337,3 @@ class GQNRoom(Environment):
             plt.show()
 
         return fig
-
-    def save(self, destination):
-        """
-        Writes the environment's attributes to the disk.
-        """
-
-        try:
-            serializable_dict = self.__dict__.copy()
-            for key, value in self.__dict__.items():
-                # keep only the ints, tuples, lists, and ndarrays
-                if type(value) not in (str, int, tuple, list, np.ndarray):
-                    del serializable_dict[key]
-                    continue
-                # make the ndarrays serializable
-                if type(value) is np.ndarray:
-                    serializable_dict[key] = value.tolist()
-            with open(destination + "/environemnt_params.txt", "w") as file:
-                json.dump(serializable_dict, file, indent=1)
-
-            # save the object on disk
-            with open(destination + "/environment.pkl", "wb") as f:
-                cpickle.dump(self, f)
-
-            # save an image of the environment
-            fig = self.display(show=False)
-            fig.savefig(destination + "/environment_image.png")
-            plt.close(fig)
-
-        except:
-            print("ERROR: saving the environment in {} failed".format(destination))
-            return False
