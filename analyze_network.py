@@ -262,23 +262,24 @@ def display_all_projections_of_a_single_run(dir_exp, explo_type, run_index):
 
 
 def test_encoding_module():
-    #TODO
+    # TODO
     pass
 
 
 def test_sensory_prediction():
-    #TODO
+    # TODO
     pass
 
 
 if __name__ == "__main__":
 
     parser = ArgumentParser()
-    parser.add_argument("-d", "--dir", dest="dir_experiment", help="path the the folder of the experiment", default="model/trained_model",
-                        required=True)
+    parser.add_argument("-d", "--dir", dest="dir_experiment", help="path the the folder of the experiment", required=True)
+    parser.add_argument("-i", "--index_run", dest="index_run", help="index of the run for which to display the projection", type=int,  default=0)
 
     args = parser.parse_args()
     dir_experiment = args.dir_experiment
+    index_run = args.index_run
 
     plt.ion()
 
@@ -286,12 +287,9 @@ if __name__ == "__main__":
     fh.savefig(dir_experiment + "/curves.png")
     fh.savefig(dir_experiment + "/curves.svg")
 
-    index_network = 0
     for exploration_type in ["MEM", "MM", "MME"]:
-        fh = display_all_projections_of_a_single_run(dir_experiment, exploration_type, index_network)
-        fh.savefig(dir_experiment + "/projection_" + exploration_type + "_run" + str(index_network) + ".png")
-        fh.savefig(dir_experiment + "/projection_" + exploration_type + "_run" + str(index_network) + ".svg")
-
-    plt.show(block=True)
+        fh = display_all_projections_of_a_single_run(dir_experiment, exploration_type, index_run)
+        fh.savefig(dir_experiment + "/projection_" + exploration_type + "_run" + str(index_run) + ".png")
+        fh.savefig(dir_experiment + "/projection_" + exploration_type + "_run" + str(index_run) + ".svg")
 
     input("Press any key to exit the program.")

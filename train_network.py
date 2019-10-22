@@ -45,6 +45,8 @@ if __name__ == "__main__":
     parser.add_argument("-e", "--n_epochs", dest="n_epochs", help="number of epochs", type=int, default=int(1e5))
     parser.add_argument("-n", "--n_simulations", dest="n_simulations",
                         help="number of independent simulations (used only if a single dataset is provided)", type=int, default=1)
+    parser.add_argument("-s", "--sigma_noise", dest="sigma_noise",
+                        help="amplitude of the noise on the motor and sensory data after normalization in [-1, 1]", type=float, default=0)
     parser.add_argument("-v", "--visual", dest="display_progress", help="flag to turn the online display on or off", action="store_true")
     parser.add_argument("-gpu", "--use_gpu", dest="use_gpu", help="flag to use the gpu", action="store_true")
     parser.add_argument("-mem", "--mem", dest="mem", help="flag to run simulations on the MEM data", action="store_true")
@@ -56,6 +58,7 @@ if __name__ == "__main__":
     dir_data = args.dir_data
     dir_model = args.dir_model
     dim_encoding = args.dim_encoding
+    sigma_noise = args.sigma_noise
     n_simulations = args.n_simulations
     n_epochs = args.n_epochs
     display_progress = args.display_progress
@@ -113,6 +116,10 @@ if __name__ == "__main__":
 
             # normalize the data (including regular samplings)
             transitions = normalize_data(transitions)
+
+            # add noise
+            for key in ["motor_t", "motor_tp", "sensor_t", "sensor_tp"]:
+                transitions[key] += sigma_noise * np.random.randn(*transitions[key].shape)
 
             # create the trial subdirectory
             dir_model_trial = "/".join([dir_model, simu_type, "run" + "{:03}".format(trial)])
