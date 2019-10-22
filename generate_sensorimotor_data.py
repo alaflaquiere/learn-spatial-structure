@@ -179,13 +179,14 @@ def display_samples(dir_data, run_index, explo_type, n=24):
     data_file = data_directory + "/dataset_" + explo_type + ".pkl"
 
     # load data
-    transitions = load_sensorimotor_transitions(data_file, n_transitions=n)
+    transitions = load_sensorimotor_transitions(data_file)
 
     # check the type of environment that generated the data
     with open(data_directory + "/environment_params.txt", "r") as f:
         dictionary = json.load(f)
     type_env = dictionary["type"]
-    n_sensations = dictionary["n_sensations"]
+
+    n_sensory_inputs = transitions["sensor_t"].shape[0]
 
     fig = plt.figure(data_file, figsize=(15, 1))
 
@@ -198,7 +199,7 @@ def display_samples(dir_data, run_index, explo_type, n=24):
             ax = fig.add_subplot(1, n, i + 1)
 
             # draw a sample
-            index = np.random.randint(n_sensations)
+            index = np.random.randint(n_sensory_inputs)
             vector = transitions["sensor_t"][index, :]
 
             # reshape as an image
@@ -216,7 +217,7 @@ def display_samples(dir_data, run_index, explo_type, n=24):
             ax = fig.add_subplot(1, n, i+1)
 
             # draw a sample
-            index = np.random.randint(n_sensations)
+            index = np.random.randint(n_sensory_inputs)
             image = transitions["sensor_t"][index, :]
 
             # reshape as an image
