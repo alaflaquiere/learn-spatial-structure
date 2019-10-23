@@ -8,7 +8,7 @@ Anonymous (anonymous@anonymous.com)
 .
 ├── dataset
 |   ├── explo0
-|   |   ├── dataset0
+|   |   ├── dataset000
 |   |   |   ├── agent.pkl
 |   |   |   ├── agent_params.txt
 |   |   |   ├── dataset_MEM.pkl
@@ -16,10 +16,17 @@ Anonymous (anonymous@anonymous.com)
 |   |   |   ├── dataset_MME.pkl
 |   |   |   ├── environment.pkl
 |   |   |   ├── environment_params.txt
-|   |   |   └── uuid.txt
-|   |   ├── dataset1
+|   |   |   ├── environment_image.png
+|   |   |   └── generation_params.txt
+|   |   ├── dataset001
 |   |   |   └── ...
-|   |   └── ...
+|   |   ├── ...
+|   |   ├── sensory_samples_MEM_dataset0.png
+|   |   ├── sensory_samples_MEM_dataset0.svg
+|   |   ├── sensory_samples_MM_dataset0.png
+|   |   ├── sensory_samples_MM_dataset0.svg
+|   |   ├── sensory_samples_MME_dataset0.png
+|   |   └── sensory_samples_MME_dataset0.svg
 |   ├── explo1
 |   └── ...
 ├── gqn_renderer
@@ -27,7 +34,7 @@ Anonymous (anonymous@anonymous.com)
 ├── model
 |   ├── experiment0
 |   |   ├── MEM
-|   |   |   ├── run0
+|   |   |   ├── run000
 |   |   |   |   ├── display_progress
 |   |   |   |   |   └── ...
 |   |   |   |   ├── model
@@ -38,15 +45,21 @@ Anonymous (anonymous@anonymous.com)
 |   |   |   |   ├── tb_logs
 |   |   |   |   |   └── ...
 |   |   |   |   ├── network_params.txt
-|   |   |   |   └── training_dataset_uuid.txt
-|   |   |   ├── run1
+|   |   |   |   └── training_params.txt
+|   |   |   ├── run001
 |   |   |   └── ...
 |   |   ├── MM
 |   |   |   └── ...
 |   |   ├──MME
 |   |   |   └── ...
 |   |   ├── curves.png
-|   |   └── curves.svg
+|   |   ├── curves.svg
+|   |   ├── projection_MEM_run0.png
+|   |   ├── projection_MEM_run0.svg
+|   |   ├── projection_MM_run0.png
+|   |   ├── projection_MM_run0.svg
+|   |   ├── projection_MME_run0.png
+|   |   └── projection_MME_run0.svg
 |   ├── experiment1
 |   |   └── ...
 |   └── ...
@@ -60,6 +73,7 @@ Anonymous (anonymous@anonymous.com)
 ├── Network.py
 ├── README.md
 ├── requirements.txt
+├── tools.py
 └── train_network.py
 ```
 
@@ -68,29 +82,31 @@ Anonymous (anonymous@anonymous.com)
 
 This repository contains the code implementing the method described in the paper
 "Unsupervised Emergence of Egocentric Spatial Structure from Sensorimotor
-Prediction" (submitted to NeurIPS, 2019).
+Prediction" (NeurIPS, 2019).
 
 
 ## Usage
 
 All scripts should be run using Python 3.5. You will also need TensorFlow to be properly
-installed on your computer to train the network (tested on tf versions 1.4 and 1.10).
+installed on your computer to train the network (tested on tf versions 1.14).
 
 
 To generate 50 sensorimotor datasets of 150000 transitions and save them in dataset/explo0, use:
 ```
 generate_sensorimotor_data.py -n 150000 -t <type> -r 50 -d dataset/explo0
 ```
+
 \<type\> can be one of the three strings:
 
-* gridexplorer3d - for an agent with 3 motor DoF in a discrete gridworld (fast)
-* gridexplorer6d - for an agent with 6 motor DoF in a discrete gridworld (fast)
-* arm3droom - for a three-segment arm moving a RGB camera in a 3D environment (slow)
+* gridexplorer3dof - for an agent with 3 motor DoF in a discrete gridworld (fast)
+* gridexplorer6dof - for an agent with 6 motor DoF in a discrete gridworld (fast)
+* armroom3dof - for a three-segment arm moving a RGB camera in a 3D environment with 3 motors (slow)
+* armroom6dof - for a three-segment arm moving a RGB camera in a 3D environment with 6 motors (slow)
 
 
-To train a network on these datasets with a motor encoding space of dimension 3 and save the models in model/experiment0, use:
+To train a network for 50000 epochs on these datasets with a motor encoding space of dimension 3 and save the models in model/experiment0, use:
 ```
-train_network.py -dd dataset/explo0 -dm model/experiment0 -dh 3 -v -mem -mm -mme
+train_network.py -dd dataset/explo0 -dm model/experiment0 -dh 3 -e 50000 -v
 ```
 
 To track the representation quality during training, use:
@@ -109,11 +125,11 @@ analyze_network.py -d model/experiment0
 
 For a finer control of the simulation, use:
 ```
-generate_sensorimotor_data.py -n <number_transitions> -t <type> -r <number_datasets> -d <dataset_destination> -v <visualization_flag> -s <scaleup_MM_explo_flag>
+generate_sensorimotor_data.py -n <number_transitions> -t <type> -r <number_datasets> -d <dataset_destination> -v <visualization_flag>
 
-train_network.py -dd <dataset_directory> -dm <model_destination> -dh <encoding_dimension> -e <number_epochs> -n <number_of_runs> -v <visualization_flag> -gpu <gpu_usage_flag> -mem <train_on_MEM_flag> -mm <train_on_MM_flag> -mme <train_on_MME_flag>
+train_network.py -dd <dataset_directory> -dm <model_destination> -dh <encoding_dimension> -e <number_epochs> -sm <motor_noise> -ss <sensor_noise> -n <number_of_runs_if_single_dataset> -v <visualization_flag> -gpu <gpu_usage_flag> -mem <train_on_MEM_flag> -mm <train_on_MM_flag> -mme <train_on_MME_flag>
 
-analyze_network.py -d <model_directory>
+analyze_network.py -d <model_directory> -i <run_index_to_display>
 ```
 or check the scripts and provided help:
 ```
