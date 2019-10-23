@@ -6,7 +6,6 @@ from argparse import ArgumentParser
 import uuid
 from tools import *
 
-
 def save_training(directory, path_data, run, type_simu, args):
     """save a UUID for the simulation"""
 
