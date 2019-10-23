@@ -95,7 +95,7 @@ train_network.py -dd dataset/explo0 -dm model/experiment0 -dh 3 -v -mem -mm -mme
 
 To track the representation quality during training, use:
 ```
-tensorboard --logdir=model/experiment0
+tensorboard --logdir=model/experiment0 --host=localhost
 ```
 and connect to the TensorBoard server.
 
