@@ -3,23 +3,26 @@ import glob
 import datetime
 from Networks import SensorimotorPredictiveNetwork
 from argparse import ArgumentParser
+import uuid
 from tools import *
 
 
-def save_training(directory, path_data, run, type_simu, n_simus, n_ep):
+def save_training(directory, path_data, run, type_simu, args):
     """save a UUID for the simulation"""
 
     with open(path_data + "/generation_params.txt", "r") as f:
         data_params = json.load(f)
 
-    dictionary = {"UUID data": data_params["UUID"],
+    dictionary = {"UUID": uuid.uuid4().hex,
+                  "UUID source data": data_params["UUID"],
                   "Source data": path_data,
+                  "Sigma noise motor": args.sigma_noise_motor,
+                  "Sigma noise sensor": args.sigma_noise_sensor,
                   "Time": datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
                   "Type simulation": type_simu,
-                  "Nbr runs": n_simus,
                   "Run": run,
                   "Destination": directory,
-                  "Nbr epochs": n_ep,
+                  "Nbr epochs": args.n_epochs,
                   "code commit hash": get_git_hash()}
     try:
         with open(directory + "/training_params.txt", "w") as f:
@@ -45,8 +48,10 @@ if __name__ == "__main__":
     parser.add_argument("-e", "--n_epochs", dest="n_epochs", help="number of epochs", type=int, default=int(1e5))
     parser.add_argument("-n", "--n_simulations", dest="n_simulations",
                         help="number of independent simulations (used only if a single dataset is provided)", type=int, default=1)
-    parser.add_argument("-s", "--sigma_noise", dest="sigma_noise",
-                        help="amplitude of the noise on the motor and sensory data after normalization in [-1, 1]", type=float, default=0)
+    parser.add_argument("-sm", "--sigma_noise_motor", dest="sigma_noise_motor",
+                        help="amplitude of the noise on the motor after normalization in [-1, 1]", type=float, default=0)
+    parser.add_argument("-ss", "--sigma_noise_sensor", dest="sigma_noise_sensor",
+                        help="amplitude of the noise on the sensor after normalization in [-1, 1]", type=float, default=0)
     parser.add_argument("-v", "--visual", dest="display_progress", help="flag to turn the online display on or off", action="store_true")
     parser.add_argument("-gpu", "--use_gpu", dest="use_gpu", help="flag to use the gpu", action="store_true")
     parser.add_argument("-mem", "--mem", dest="mem", help="flag to run simulations on the MEM data", action="store_true")
@@ -59,6 +64,8 @@ if __name__ == "__main__":
     dir_model = args.dir_model
     dim_encoding = args.dim_encoding
     sigma_noise = args.sigma_noise
+    sigma_noise_motor = args.sigma_noise_motor
+    sigma_noise_sensor = args.sigma_noise_sensor
     n_simulations = args.n_simulations
     n_epochs = args.n_epochs
     display_progress = args.display_progress
@@ -66,9 +73,7 @@ if __name__ == "__main__":
     if not(args.mem or args.mm or args.mme):  # if no exploration has been specified, do all of them
         mem = mm = mme = True
     else:
-        mem = args.mem
-        mm = args.mm
-        mme = args.mme
+        mem, mm, mme = args.mem, args.mm, args.mme
 
     # check dir_data
     if not os.path.exists(dir_data):
@@ -118,8 +123,10 @@ if __name__ == "__main__":
             transitions = normalize_data(transitions)
 
             # add noise
-            for key in ["motor_t", "motor_tp", "sensor_t", "sensor_tp"]:
-                transitions[key] += sigma_noise * np.random.randn(*transitions[key].shape)
+            for key in ["motor_t", "motor_tp"]:
+                transitions[key] += sigma_noise_motor * np.random.randn(*transitions[key].shape)
+            for key in ["sensor_t", "sensor_tp"]:
+                transitions[key] += sigma_noise_sensor * np.random.randn(*transitions[key].shape)
 
             # create the trial subdirectory
             dir_model_trial = "/".join([dir_model, simu_type, "run" + "{:03}".format(trial)])
@@ -132,7 +139,7 @@ if __name__ == "__main__":
             network.save(dir_model_trial)
 
             # copy generation_params from the source dataset
-            save_training(dir_model_trial, sub_dir_data, trial, simu_type, n_simulations, n_epochs)
+            save_training(dir_model_trial, sub_dir_data, trial, simu_type, args)
 
             # train the network
             network.full_train(n_epochs=n_epochs, data=transitions, disp=display_progress)
