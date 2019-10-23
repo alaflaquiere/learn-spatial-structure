@@ -63,7 +63,6 @@ if __name__ == "__main__":
     dir_data = args.dir_data
     dir_model = args.dir_model
     dim_encoding = args.dim_encoding
-    sigma_noise = args.sigma_noise
     sigma_noise_motor = args.sigma_noise_motor
     sigma_noise_sensor = args.sigma_noise_sensor
     n_simulations = args.n_simulations
