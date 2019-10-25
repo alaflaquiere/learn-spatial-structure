@@ -161,11 +161,12 @@ class SensorimotorPredictiveNetwork:
 
         return current_epoch, current_loss
 
-    def full_train(self, n_epochs, data, disp):
+    def full_train(self, n_epochs, data, disp, save_frames=False):
         """
         Performs successive training cycles of 1000 epochs on data up to n_epochs epochs. After each cycle, evaluates the network, save the variables
         tracked in Tensorboard, and save the network.
         If disp=True, also launch display_progress.py in a parallel process to visualize the network progress.
+        If save_frames=True, frames of the latent space are save during the training and a video is compiled after the training.
         """
 
         print('training the network...')
@@ -203,6 +204,22 @@ class SensorimotorPredictiveNetwork:
                 # get tracked variables and send them to Tensorboard
                 fitted_p, metric_error, topo_error_in_P, topo_error_in_H, encoding, prediction, sensation = self.track_progress(data)
 
+                if save_frames:
+                    if "index" not in locals():
+                        index = 0
+                        from display_progress import display_data
+                        import matplotlib.pyplot as plt
+                    else:
+                        index += 1
+                    with open(self.model_destination + "/display_progress/display_data.pkl", "rb") as f:
+                        data_to_display = cpickle.load(f)
+                    figframe = display_data(data_to_display, fig_number=9)
+                    dir_frames = self.model_destination + "/frames"
+                    if not os.path.exists(dir_frames):
+                        os.makedirs(dir_frames)
+                    figframe.savefig(dir_frames + "/img{:06}.png".format(index), dpi=300)
+                    plt.close(figframe)
+
                 print("epoch: {:6d}, loss: {:.2e}, metric error: {:.2e}, topo error in P: {:.2e}, topo error in H: {:.2e} - ({:.2f} sec)"
                       .format(epoch, current_loss, metric_error, topo_error_in_P, topo_error_in_H, time.time() - t0))
 
@@ -212,9 +229,23 @@ class SensorimotorPredictiveNetwork:
                 if current_loss is None:
                     break
 
+            # final evaluation of the network
+            fitted_p, metric_error, topo_error_in_P, topo_error_in_H, encoding, prediction, sensation = self.track_progress(data)
+
         # kill the display process
         if disp:
             display_proc.kill()
+
+        # generate the training video
+        if save_frames:
+            if platform.system() == 'Windows':
+                command = "ffmpeg -r 18 -s 1920x1080 -i {}/img%06d.png -vcodec libx264 -crf 25 -pix_fmt yuv420p {}.mp4".format(dir_frames,
+                                                                                                                               dir_frames + "/" + str(int(time.time())))
+                display_proc = subprocess.run(command)
+            elif platform.system() == 'Linux':
+                command = "ffmpeg -r 18 -s 1920x1080 -i {}/img%06d.png -vcodec libx264 -crf 25 -pix_fmt yuv420p {}.mp4".format(dir_frames,
+                                                                                                                               dir_frames + "/" + str(int(time.time())))
+                display_proc = subprocess.run([command], shell=True)
 
     def compute_weighted_affine_errors_in_P(self, target_set, origin_set, weight=0):
         """

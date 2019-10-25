@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 import uuid
 from tools import *
 
+
 def save_training(directory, path_data, run, type_simu, args):
     """save a UUID for the simulation"""
 
@@ -140,6 +141,6 @@ if __name__ == "__main__":
             save_training(dir_model_trial, sub_dir_data, trial, simu_type, args)
 
             # train the network
-            network.full_train(n_epochs=n_epochs, data=transitions, disp=display_progress)
+            network.full_train(n_epochs=n_epochs, data=transitions, disp=display_progress, save_frames=False)
 
     input("Press any key to exit the program.")

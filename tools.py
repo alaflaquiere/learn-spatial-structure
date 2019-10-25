@@ -26,8 +26,12 @@ def create_directory(directory, safe=True):
 
 
 def get_git_hash():
-    binary_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip()
-    return binary_hash.decode("utf-8")
+    try:
+        binary_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip()
+        hash = binary_hash.decode("utf-8")
+    except:
+        hash = "no git commit"
+    return hash
 
 
 def load_sensorimotor_transitions(data_directory, n_transitions=None):

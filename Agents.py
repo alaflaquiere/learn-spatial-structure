@@ -261,7 +261,7 @@ class HingeArm(Agent):
         """
         resolution = int(self.size_regular_grid**(1/self.n_motors))
         # create a grid of coordinates
-        coordinates = np.array(np.meshgrid(*list([np.linspace(-1, 1, resolution)]) * self.n_motors))
+        coordinates = np.array(np.meshgrid(*list([np.arange(-1, 1, 2/resolution)]) * self.n_motors))
         # reshape the coordinates into matrix of size (reso**n_motors, n_motors)
         motor_grid = np.array([coord.reshape((-1)) for coord in coordinates]).T
         # get the corresponding positions
@@ -283,7 +283,7 @@ class HingeArm3dof(HingeArm):
     """
 
     def __init__(self):
-        super().__init__(type_agent="HingeArm3dof", n_motors=3, size_regular_grid=6**3)
+        super().__init__(type_agent="HingeArm3dof", n_motors=3, size_regular_grid=7**3)
         self.motor_amplitude = [np.pi] * self.n_motors
         self.segments_length = [0.5] * self.n_motors  # the arm covers a working space working space of radius 1.5 in an environment of size size 7
 
@@ -301,8 +301,8 @@ class HingeArm3dof(HingeArm):
         """
 
         # get the joints positions
-        x = np.cumsum(np.multiply(self.segments_length, np.cos(np.cumsum(self.motor_amplitude * motor, axis=1))), axis=1, keepdims=True)
-        y = np.cumsum(np.multiply(self.segments_length, np.sin(np.cumsum(self.motor_amplitude * motor, axis=1))), axis=1, keepdims=True)
+        x = np.cumsum(np.multiply(self.segments_length, np.cos(np.cumsum(self.motor_amplitude * motor, axis=1))), axis=1)
+        y = np.cumsum(np.multiply(self.segments_length, np.sin(np.cumsum(self.motor_amplitude * motor, axis=1))), axis=1)
 
         # add the agent's base
         x = np.hstack((np.zeros((x.shape[0], 1)), x))
@@ -313,7 +313,8 @@ class HingeArm3dof(HingeArm):
 
         # display the different motor configurations
         for i in range(motor.shape[0]):
-            plt.plot(x[i, :, 0], y[i, :, 1], '-o')
+            plt.plot(x[i, :], y[i, :], '-o')
+        plt.axis("equal")
 
 
 class HingeArm6dof(HingeArm):

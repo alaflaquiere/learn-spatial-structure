@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from tools import *
 
-# TODO: clean the dependencies (after removing flatland)
-
 
 def check_savability(destination, dictionary):
     """sanity check: try dumping a file on the disk and check it is not too large"""
