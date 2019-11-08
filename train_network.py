@@ -111,6 +111,15 @@ if __name__ == "__main__":
             sub_dir_data = "{}/dataset{:03}".format(dir_data, trial % len(subfolder_list))
             filename = "{}/dataset_{}.pkl".format(sub_dir_data, simu_type)
 
+            # get the destination folder
+            dir_model_trial = "/".join([dir_model, simu_type, "run" + "{:03}".format(trial)])
+
+            # skip the trials already existing
+            if os.path.exists(dir_model_trial):
+                # TODO: check that folder is actually complete (in case of crash, the last run might have stopped before the end)
+                print("> trial {} already exists; skipped".format(dir_model_trial))
+                continue
+
             print("[{} EXPLORATION - (dataset: {})]".format(simu_type, filename))
 
             # load the data
@@ -128,7 +137,6 @@ if __name__ == "__main__":
                 transitions[key] += sigma_noise_sensor * np.random.randn(*transitions[key].shape)
 
             # create the trial subdirectory
-            dir_model_trial = "/".join([dir_model, simu_type, "run" + "{:03}".format(trial)])
             create_directory(dir_model_trial, safe=False)
 
             # create the network

@@ -15,12 +15,16 @@ def check_directory_exists(directory):
 def create_directory(directory, safe=True):
     """Create the directory or ask permission to overwrite it if it already exists"""
     if os.path.exists(directory) and safe:
-        ans = input("> WARNING: The folder {} already exists; do you want to overwrite its content? [y,n]: ".format(directory))
+        ans = input("> WARNING: The folder {} already exists; do you want to add new trials? [y,n]: ".format(directory))
         if ans in ["y", "Y", "yes", "Yes", "YES"]:
-            shutil.rmtree(directory)
+            return
         else:
-            print("exiting the program")
-            sys.exit()
+            ans = input("> WARNING: Do you want to overwrite the folder {}? [y,n]: ".format(directory))
+            if ans in ["y", "Y", "yes", "Yes", "YES"]:
+                shutil.rmtree(directory)
+            else:
+                print("exiting the program")
+                sys.exit()
     os.makedirs(directory)
     return True
 

@@ -259,6 +259,12 @@ if __name__ == "__main__":
         # subdirectory for the trial
         dir_data_trial = "/".join([dir_data, "dataset{:03}".format(trial)])
 
+        # skip the trials already existing
+        if os.path.exists(dir_data_trial):
+            # TODO: check that folder is actually complete (in case of crash, the last run might have stopped before the end)
+            print("> trial {} already exists; skipped".format(dir_data_trial))
+            continue
+
         print("[ENVIRONMENT {} >> data saved in {}]".format(trial, dir_data_trial))
 
         # create the trial subdirectory
