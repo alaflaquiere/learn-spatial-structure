@@ -1,7 +1,24 @@
 # Unsupervised Emergence of Egocentric Spatial Structure from Sensorimotor Prediction
 
 ## Author and Contact
-Anonymous (anonymous@anonymous.com)
+Alban Laflaquière (alaflaquiere@softbankrobotics.com)
+
+## Introduction
+
+This repository contains the code implementing the method described in the paper
+[Unsupervised Emergence of Egocentric Spatial Structure from Sensorimotor
+Prediction](https://arxiv.org/abs/1906.01401) (NeurIPS, 2019).
+
+If you are using this implementation in your research, please consider giving credit by citing our paper:
+```
+@inproceedings{laflaquiere2019spatialstructure,
+  title={Unsupervised Emergence of Egocentric Spatial Structure from Sensorimotor
+Prediction},
+  author={Laflaqui\`ere, Alban and Garcia Ortiz, Michael},
+  booktitle={Advances in Neural Information Processing Systems},
+  year={2019}
+}
+```
 
 ## Structure
 ```
@@ -76,14 +93,6 @@ Anonymous (anonymous@anonymous.com)
 ├── tools.py
 └── train_network.py
 ```
-
-
-## Introduction
-
-This repository contains the code implementing the method described in the paper
-"Unsupervised Emergence of Egocentric Spatial Structure from Sensorimotor
-Prediction" (NeurIPS, 2019).
-
 
 ## Usage
 
