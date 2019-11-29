@@ -12,8 +12,7 @@ Prediction](https://arxiv.org/abs/1906.01401) (NeurIPS, 2019).
 If you are using this implementation in your research, please consider giving credit by citing our paper:
 ```
 @inproceedings{laflaquiere2019spatialstructure,
-  title={Unsupervised Emergence of Egocentric Spatial Structure from Sensorimotor
-Prediction},
+  title={Unsupervised Emergence of Egocentric Spatial Structure from Sensorimotor Prediction},
   author={Laflaqui\`ere, Alban and Garcia Ortiz, Michael},
   booktitle={Advances in Neural Information Processing Systems},
   year={2019}
