@@ -218,7 +218,7 @@ class GridExplorer6dof(GridExplorer):
         state2pos_mapping = mapping[:, 0:2]
 
         # rescale the positions in [-2, 2] and format it as integer
-        state2pos_mapping = (state2pos_mapping * 4 - 2).astype(int)
+        state2pos_mapping = np.ceil(state2pos_mapping * (reso - 1) - (reso / 2)).astype(int)
 
         return state2motor_mapping, state2pos_mapping
 
