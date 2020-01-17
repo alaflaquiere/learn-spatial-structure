@@ -281,7 +281,8 @@ if __name__ == "__main__":
         #
         elif type_simu == "armroom3dof":
             my_agent = Agents.HingeArm3dof()  # working space of radius 1.5 in an environment of size size 7
-            my_environment = Environments.GQNRoom()
+            # my_environment = Environments.GQNRoom()
+            my_environment = Environments.GQNBulletRoom()
         #
         elif type_simu == "armroom6dof":
             my_agent = Agents.HingeArm6dof()  # working space of radius 1.5 in an environment of size size 7
