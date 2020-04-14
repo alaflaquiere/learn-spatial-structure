@@ -6,6 +6,8 @@ import _pickle as cpickle
 from tqdm import tqdm
 import gqn_renderer as gqn
 import gqn_renderer.tools as tools
+import gqn_renderer.bullet_tools as bullet_tools
+from gqn_renderer.bullet.camera import *
 
 """
 Collection of environments that can be used by generate-sensorimotor-data.py.
@@ -231,7 +233,6 @@ class GQNRoom(Environment):
         Returns:
             sensations - (self.n_sensations, 4) array
         """
-
         camera_height = 1.6
         camera_direction = np.array([2.5, 1.8, 0])
 
@@ -337,3 +338,115 @@ class GQNRoom(Environment):
             plt.show()
 
         return fig
+
+
+class GQNBulletRoom(Environment):
+    """
+    A 3D room of size (7,7) randomly filled with random objects. The position (0,0) corresponds to the center of the room.
+    At each position, the environment generates a sensory input corresponding to the reading of a RGB camera with a fixed orientation.
+    Code adapted from https://github.com/musyoku/gqn-dataset-renderer, and embedded in a bullet environment
+    Attributes
+    ----------
+    n_obstacles : int
+        number of obstacles in the environment
+    scene : simulated environment
+        instance of the simulation
+    """
+
+    def __init__(self, n_obstacles=16):
+        super().__init__(
+            type_environment="3dRoom",
+            n_sensations=16*16*3,
+            environment_size=(7, 7))
+        self.n_obstacles = n_obstacles
+
+        # Build the scene
+        bullet_tools.build_scene(fix_light_position=True)
+
+        # Create the objects
+        bullet_tools.place_objects(
+            bullet_tools.get_colors(),
+            min_num_objects=self.n_obstacles,
+            max_num_objects=self.n_obstacles,
+            discrete_position=False,
+            rotate_object=False)
+
+        # Create the camera
+        # self.camera = Camera(np.pi / 4, CameraResolution(16, 16))
+        self.camera = Camera(45, CameraResolution(16, 16))
+        self.camera.setTranslation([0, -1, 1])
+
+    def get_sensation_at_position(self, position, display=False):
+        """
+        Returns the sensations at a given set of input positions.
+        Inputs:
+            position - (N, 2) array
+        Returns:
+            sensations - (self.n_sensations, 4) array
+        """
+
+        camera_height = 1.6
+        camera_direction = np.array([2.5, 1.8, 0])
+
+        # Deal with the case of a single position
+        position = position.reshape(-1, 2)
+
+        # Prepare variable
+        sensations = np.full((position.shape[0], self.n_sensations), np.nan)
+
+        # set the camera orientation
+        yaw, pitch = bullet_tools.compute_yaw_and_pitch(camera_direction)
+        print((yaw, pitch))
+        self.camera.setOrientation(pybullet.getQuaternionFromEuler(
+            [0.0, pitch, yaw]))
+
+        if display:
+            fig = plt.figure(figsize=(4, 4))
+            ax = fig.add_subplot(1, 1, 1)
+
+        for i in tqdm(range(position.shape[0]), desc="GQNRoom", mininterval=1):
+
+            self.camera.setTranslation(
+                [position[i, 0], position[i, 1], camera_height])
+
+            # Debug display of the camera axis. WARNING, if number of
+            # transitions high, don't uncomment the following lines
+            # debug_target = pybullet.addUserDebugLine(
+            #     self.camera.translation,
+            #     self.camera.camera_target,
+            #     lineColorRGB=[0, 0, 1])
+            # debug_up = pybullet.addUserDebugLine(
+            #     self.camera.translation,
+            #     (np.array(self.camera.translation) + np.array(self.camera.up_vector)).tolist(),
+            #     lineColorRGB=[0, 1, 0])
+
+            # render
+            image = self.camera.getFrame()
+
+            # save sensation
+            sensations[i, :] = image.reshape(-1)
+
+            # clean the axis and display the image
+            if display:
+                ax.cla()
+                ax.imshow(image, interpolation="none")
+                plt.pause(1e-10)
+
+        if display:
+            plt.close(fig)
+
+        return sensations
+
+    def generate_shift(self, k=1, static=False):
+        """
+        Returns k random shifts for the environment in [-1.75, 1.75]^2.
+        If static=True, returns the default shift which is [0, 0].
+        """
+        if static:
+            shift = np.zeros((k, 2))
+        else:
+            shift = np.array(self.environment_size)/2 * np.random.rand(k, 2) - np.array(self.environment_size)/4
+        return shift
+
+    def display(self, show=True):
+        pass
