@@ -49,6 +49,9 @@ class Environment:
     def display(self, show):
         return None
 
+    def destroy(self):
+        return None
+
     def save(self, destination):
         """
          Writes the environment's attributes to the disk.
@@ -210,8 +213,6 @@ class GQNRoom(Environment):
     ----------
     n_obstacles : int
         number of obstacles in the environment
-    scene : simulated environment
-        instance of the simulation
     """
 
     def __init__(self, n_obstacles=16):
@@ -349,9 +350,8 @@ class GQNBulletRoom(Environment):
     ----------
     n_obstacles : int
         number of obstacles in the environment
-    scene : simulated environment
-        instance of the simulation
     """
+    # TODO: add skybox
 
     def __init__(self, n_obstacles=16):
         super().__init__(
@@ -368,11 +368,10 @@ class GQNBulletRoom(Environment):
             bullet_tools.get_colors(),
             min_num_objects=self.n_obstacles,
             max_num_objects=self.n_obstacles,
-            discrete_position=False,
-            rotate_object=False)
+            discrete_position=True,
+            rotate_object=True)
 
         # Create the camera
-        # self.camera = Camera(np.pi / 4, CameraResolution(16, 16))
         self.camera = Camera(45, CameraResolution(16, 16))
         self.camera.setTranslation([0, -1, 1])
 
@@ -396,7 +395,6 @@ class GQNBulletRoom(Environment):
 
         # set the camera orientation
         yaw, pitch = bullet_tools.compute_yaw_and_pitch(camera_direction)
-        print((yaw, pitch))
         self.camera.setOrientation(pybullet.getQuaternionFromEuler(
             [0.0, pitch, yaw]))
 
@@ -406,19 +404,9 @@ class GQNBulletRoom(Environment):
 
         for i in tqdm(range(position.shape[0]), desc="GQNRoom", mininterval=1):
 
-            self.camera.setTranslation(
-                [position[i, 0], position[i, 1], camera_height])
-
-            # Debug display of the camera axis. WARNING, if number of
-            # transitions high, don't uncomment the following lines
-            # debug_target = pybullet.addUserDebugLine(
-            #     self.camera.translation,
-            #     self.camera.camera_target,
-            #     lineColorRGB=[0, 0, 1])
-            # debug_up = pybullet.addUserDebugLine(
-            #     self.camera.translation,
-            #     (np.array(self.camera.translation) + np.array(self.camera.up_vector)).tolist(),
-            #     lineColorRGB=[0, 1, 0])
+            # set the camera position
+            camera_position = [position[i, 0], camera_height, position[i, 1]]
+            self.camera.setTranslation(bullet_tools.transform_pos_for_bullet(camera_position))
 
             # render
             image = self.camera.getFrame()
@@ -434,6 +422,7 @@ class GQNBulletRoom(Environment):
 
         if display:
             plt.close(fig)
+            plt.pause(0.00001)
 
         return sensations
 
@@ -448,5 +437,36 @@ class GQNBulletRoom(Environment):
             shift = np.array(self.environment_size)/2 * np.random.rand(k, 2) - np.array(self.environment_size)/4
         return shift
 
+    def destroy(self):
+        """
+        Disconnect the pybullet scene.
+        """
+        bullet_tools.tear_down_scene()
+
     def display(self, show=True):
-        pass
+        camera_position = [8, 8, 8]
+        camera_direction = np.array((5, 4.7, 5))
+        resolution = 512
+
+        overview_camera = Camera(45, CameraResolution(resolution, resolution))
+
+        # set the camera orientation and position
+        yaw, pitch = bullet_tools.compute_yaw_and_pitch(camera_direction)
+        overview_camera.setOrientation(pybullet.getQuaternionFromEuler([0.0, pitch, yaw]))
+        overview_camera.setTranslation(bullet_tools.transform_pos_for_bullet(camera_position))
+
+        fig = plt.figure(figsize=(8, 8))
+        ax = fig.add_subplot(1, 1, 1)
+        plt.tight_layout()
+        ax.axis("off")
+
+        image = overview_camera.getFrame()
+        # display the image
+        ax.cla()
+        ax.imshow(image, interpolation="none")
+        ax.axis("off")
+        if show:
+            plt.show()
+            plt.pause(0.00001)
+
+        return fig

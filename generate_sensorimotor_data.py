@@ -281,12 +281,11 @@ if __name__ == "__main__":
         #
         elif type_simu == "armroom3dof":
             my_agent = Agents.HingeArm3dof()  # working space of radius 1.5 in an environment of size size 7
-            # my_environment = Environments.GQNRoom()
             my_environment = Environments.GQNBulletRoom()
         #
         elif type_simu == "armroom6dof":
             my_agent = Agents.HingeArm6dof()  # working space of radius 1.5 in an environment of size size 7
-            my_environment = Environments.GQNRoom()
+            my_environment = Environments.GQNBulletRoom()
         #
         else:
             print("ERROR: invalid type of simulation - use 'gridexplorer3dof', 'gridexplorer6dof', 'armroom3dof', or 'armroom6dof'")
@@ -301,6 +300,9 @@ if __name__ == "__main__":
         generate_sensorimotor_data(my_agent, my_environment, "MEM", n_transitions, dir_data_trial, disp=display_exploration)
         generate_sensorimotor_data(my_agent, my_environment, "MM",  n_transitions, dir_data_trial, disp=display_exploration)
         generate_sensorimotor_data(my_agent, my_environment, "MME", n_transitions, dir_data_trial, disp=display_exploration)
+
+        # clean
+        my_environment.destroy()
 
     plt.ion()
 

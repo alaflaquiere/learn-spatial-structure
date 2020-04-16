@@ -110,24 +110,15 @@ class Camera:
             self.resolution.height,
             view_matrix,
             self.projection_matrix,
+            shadow=1,
+            lightDirection=[-0.5, -0.4, 1],
+            lightDistance=20,
             renderer=pybullet.ER_BULLET_HARDWARE_OPENGL,
             flags=pybullet.ER_NO_SEGMENTATION_MASK)
 
         camera_image = np.reshape(
             camera_image[2],
             (camera_image[1], camera_image[0], 4))
-
-        # self.rgb_image[:, :, 0] =\
-        #     (1 - camera_image[:, :, 3]) * camera_image[:, :, 2] +\
-        #     camera_image[:, :, 3] * camera_image[:, :, 2]
-
-        # self.rgb_image[:, :, 1] =\
-        #     (1 - camera_image[:, :, 3]) * camera_image[:, :, 1] +\
-        #     camera_image[:, :, 3] * camera_image[:, :, 1]
-
-        # self.rgb_image[:, :, 2] =\
-        #     (1 - camera_image[:, :, 3]) * camera_image[:, :, 0] +\
-        #     camera_image[:, :, 3] * camera_image[:, :, 0]
 
         self.rgb_image[:, :, 0] =\
             (1 - camera_image[:, :, 3]) * camera_image[:, :, 0] +\
@@ -140,10 +131,6 @@ class Camera:
         self.rgb_image[:, :, 2] =\
             (1 - camera_image[:, :, 3]) * camera_image[:, :, 2] +\
             camera_image[:, :, 3] * camera_image[:, :, 2]
-
-        # self.rgb_image[:, :, 0] = camera_image[:, :, 0]
-        # self.rgb_image[:, :, 1] = camera_image[:, :, 1]
-        # self.rgb_image[:, :, 2] = camera_image[:, :, 2]
 
         frame = self.rgb_image.astype(np.uint8)
         return frame.copy()

@@ -10,3 +10,4 @@ trimesh==3.2.36
 networkx==2.4
 freetype-py==2.1.0.post1
 pyglet==1.4.6
+pybullet==2.7.2
