@@ -4,8 +4,6 @@ from mpl_toolkits.mplot3d import Axes3D
 import json
 import _pickle as cpickle
 from tqdm import tqdm
-import gqn_renderer as gqn
-import gqn_renderer.tools as tools
 import gqn_renderer.bullet_tools as bullet_tools
 from gqn_renderer.bullet.camera import *
 
@@ -345,7 +343,7 @@ class GQNBulletRoom(Environment):
     """
     A 3D room of size (7,7) randomly filled with random objects. The position (0,0) corresponds to the center of the room.
     At each position, the environment generates a sensory input corresponding to the reading of a RGB camera with a fixed orientation.
-    Code adapted from https://github.com/musyoku/gqn-dataset-renderer, and embedded in a bullet environment
+    Code adapted from https://github.com/musyoku/gqn-dataset-renderer, and embedded in a bullet environment.
     Attributes
     ----------
     n_obstacles : int
