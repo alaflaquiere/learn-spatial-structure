@@ -365,10 +365,10 @@ class GQNBulletRoom(Environment):
 
         # Create the objects
         bullet_tools.place_objects(
-            bullet_tools.get_colors(),
+            bullet_tools.get_colors(12),
             min_num_objects=self.n_obstacles,
             max_num_objects=self.n_obstacles,
-            discrete_position=True,
+            discrete_position=False,
             rotate_object=True)
 
         # Create the camera
@@ -402,7 +402,7 @@ class GQNBulletRoom(Environment):
             fig = plt.figure(figsize=(4, 4))
             ax = fig.add_subplot(1, 1, 1)
 
-        for i in tqdm(range(position.shape[0]), desc="GQNRoom", mininterval=1):
+        for i in tqdm(range(position.shape[0]), desc="GQNBulletRoom", mininterval=1):
 
             # set the camera position
             camera_position = [position[i, 0], camera_height, position[i, 1]]

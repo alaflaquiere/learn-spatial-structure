@@ -1,23 +1,14 @@
 import os
 import sys
+import glob
 import numpy as np
 import pybullet
 import colorsys
 from gqn_renderer.bullet.camera import *
 
-FLOOR_TEXTURES = [
-    "textures/lg_floor_d.tga",
-    "textures/lg_style_01_floor_blue_d.tga",
-    "textures/lg_style_01_floor_orange_bright_d.tga"
-]
+FLOOR_TEXTURES = glob.glob("gqn_renderer/textures/*floor*.tga")
 
-WALL_TEXTURES = [
-    "textures/lg_style_01_wall_cerise_d.tga",
-    "textures/lg_style_01_wall_green_bright_d.tga",
-    "textures/lg_style_01_wall_red_bright_d.tga",
-    "textures/lg_style_02_wall_yellow_d.tga",
-    "textures/lg_style_03_wall_orange_bright_d.tga"
-]
+WALL_TEXTURES = glob.glob("gqn_renderer/textures/*wall*.tga")
 
 OBJECTS = (
     "urdf/cone.urdf",
