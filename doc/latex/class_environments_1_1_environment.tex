@@ -1,0 +1,74 @@
+\hypertarget{class_environments_1_1_environment}{}\doxysection{Environments.\+Environment Class Reference}
+\label{class_environments_1_1_environment}\index{Environments.Environment@{Environments.Environment}}
+Inheritance diagram for Environments.\+Environment\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.964912cm]{class_environments_1_1_environment}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_environments_1_1_environment_a0ec1ecc6db6710e7442471e0d66c0701}\label{class_environments_1_1_environment_a0ec1ecc6db6710e7442471e0d66c0701}} 
+def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self, type\+\_\+environment, n\+\_\+sensations, environment\+\_\+size)
+\item 
+\mbox{\Hypertarget{class_environments_1_1_environment_a7d33dd163c5d5ab5e3566c8327e3b313}\label{class_environments_1_1_environment_a7d33dd163c5d5ab5e3566c8327e3b313}} 
+def {\bfseries get\+\_\+sensation\+\_\+at\+\_\+position} (self, position)
+\item 
+\mbox{\Hypertarget{class_environments_1_1_environment_a6a2a143f86d2ae7f50b424b0f3cebc94}\label{class_environments_1_1_environment_a6a2a143f86d2ae7f50b424b0f3cebc94}} 
+def {\bfseries generate\+\_\+shift} (self, k)
+\item 
+\mbox{\Hypertarget{class_environments_1_1_environment_a1111c5ad9489ba584c2d11154669a0d1}\label{class_environments_1_1_environment_a1111c5ad9489ba584c2d11154669a0d1}} 
+def {\bfseries display} (self, show)
+\item 
+\mbox{\Hypertarget{class_environments_1_1_environment_a1cb71d2c2d32ed8ff8abe754a2adb7b2}\label{class_environments_1_1_environment_a1cb71d2c2d32ed8ff8abe754a2adb7b2}} 
+def {\bfseries destroy} (self)
+\item 
+def \mbox{\hyperlink{class_environments_1_1_environment_a14341a1fbc3f1bfff3af2dffd3f388a0}{save}} (self, destination)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_environments_1_1_environment_ac0d6f997de794a36a8fa3dd3332540aa}\label{class_environments_1_1_environment_ac0d6f997de794a36a8fa3dd3332540aa}} 
+{\bfseries type}
+\item 
+\mbox{\Hypertarget{class_environments_1_1_environment_aa506dc4e8f4977415ee750d93d991f32}\label{class_environments_1_1_environment_aa506dc4e8f4977415ee750d93d991f32}} 
+{\bfseries n\+\_\+sensations}
+\item 
+\mbox{\Hypertarget{class_environments_1_1_environment_a06a6fb5cdfd46af97f15f2865842752d}\label{class_environments_1_1_environment_a06a6fb5cdfd46af97f15f2865842752d}} 
+{\bfseries environment\+\_\+size}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}    type: str
+        type of environment
+    n_sensations: int
+        dimension of the sensory input produced at each sensor position
+    environment_size: [int, int] or [float, float]
+        size of the environment
+
+    get_sensation_at_position(position):
+        generate the sensory inputs associated with input holistic sensor positions
+    generate_shift(k):
+        returns k random shifts of the environment
+    display():
+        displays the environment
+    log(dir):
+        logs the environment's parameters
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_environments_1_1_environment_a14341a1fbc3f1bfff3af2dffd3f388a0}\label{class_environments_1_1_environment_a14341a1fbc3f1bfff3af2dffd3f388a0}} 
+\index{Environments.Environment@{Environments.Environment}!save@{save}}
+\index{save@{save}!Environments.Environment@{Environments.Environment}}
+\doxysubsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily def Environments.\+Environment.\+save (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{destination }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb} Writes the environment's attributes to the disk.\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Environments.\+py\end{DoxyCompactItemize}

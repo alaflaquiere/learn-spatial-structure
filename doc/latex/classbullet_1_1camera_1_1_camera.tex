@@ -1,0 +1,99 @@
+\hypertarget{classbullet_1_1camera_1_1_camera}{}\doxysection{bullet.\+camera.\+Camera Class Reference}
+\label{classbullet_1_1camera_1_1_camera}\index{bullet.camera.Camera@{bullet.camera.Camera}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{classbullet_1_1camera_1_1_camera_ac318ee06a8af595d6c2764e0b88be0b4}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, fov, resolution)
+\item 
+def \mbox{\hyperlink{classbullet_1_1camera_1_1_camera_a254f66f1540b82e7c155126af1c8ccd4}{set\+Translation}} (self, translation)
+\item 
+def \mbox{\hyperlink{classbullet_1_1camera_1_1_camera_a8ef31d2ec660aea72881c8c1dcd4c551}{set\+Orientation}} (self, quaternion)
+\item 
+def \mbox{\hyperlink{classbullet_1_1camera_1_1_camera_aefb94dc47367a57e0f9cc45e672e6c52}{set\+Position}} (self, translation, quaternion)
+\item 
+def \mbox{\hyperlink{classbullet_1_1camera_1_1_camera_ab417e77c7744c9149eeed3bb30c6d99b}{get\+Frame}} (self)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_a7ddc60b2c7cc7fb8615cd5f188e3c7bd}\label{classbullet_1_1camera_1_1_camera_a7ddc60b2c7cc7fb8615cd5f188e3c7bd}} 
+{\bfseries resolution}
+\item 
+\mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_a730d6c20891bf0dcfcc152ecb337beef}\label{classbullet_1_1camera_1_1_camera_a730d6c20891bf0dcfcc152ecb337beef}} 
+{\bfseries projection\+\_\+matrix}
+\item 
+\mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_a5ad5b14c63595bbc3d957ce1bf784759}\label{classbullet_1_1camera_1_1_camera_a5ad5b14c63595bbc3d957ce1bf784759}} 
+{\bfseries rgb\+\_\+image}
+\item 
+\mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_a1bd070df68d27b74317c890950af7201}\label{classbullet_1_1camera_1_1_camera_a1bd070df68d27b74317c890950af7201}} 
+{\bfseries translation}
+\item 
+\mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_ae066581c7e74b580155c7ffb62aedfd1}\label{classbullet_1_1camera_1_1_camera_ae066581c7e74b580155c7ffb62aedfd1}} 
+{\bfseries camera\+\_\+target}
+\item 
+\mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_a87f7a0f82967e65be502a05e68516ec3}\label{classbullet_1_1camera_1_1_camera_a87f7a0f82967e65be502a05e68516ec3}} 
+{\bfseries forward\+\_\+vector}
+\item 
+\mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_a98fc5af7ce107d706bd73125ccaf755c}\label{classbullet_1_1camera_1_1_camera_a98fc5af7ce107d706bd73125ccaf755c}} 
+{\bfseries up\+\_\+vector}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Defines a camera in the environment
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_ac318ee06a8af595d6c2764e0b88be0b4}\label{classbullet_1_1camera_1_1_camera_ac318ee06a8af595d6c2764e0b88be0b4}} 
+\index{bullet.camera.Camera@{bullet.camera.Camera}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!bullet.camera.Camera@{bullet.camera.Camera}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def bullet.\+camera.\+Camera.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{fov,  }\item[{}]{resolution }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Constructor. The aspect ratio of the camera is 1 (square image)
+
+Parameters:
+    fov - The fov of the camera, float or np.float
+    resolution - The resolution of the camera, CameraResolution object
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_ab417e77c7744c9149eeed3bb30c6d99b}\label{classbullet_1_1camera_1_1_camera_ab417e77c7744c9149eeed3bb30c6d99b}} 
+\index{bullet.camera.Camera@{bullet.camera.Camera}!getFrame@{getFrame}}
+\index{getFrame@{getFrame}!bullet.camera.Camera@{bullet.camera.Camera}}
+\doxysubsubsection{\texorpdfstring{getFrame()}{getFrame()}}
+{\footnotesize\ttfamily def bullet.\+camera.\+Camera.\+get\+Frame (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Captures an image
+\end{DoxyVerb}
+ \mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_a8ef31d2ec660aea72881c8c1dcd4c551}\label{classbullet_1_1camera_1_1_camera_a8ef31d2ec660aea72881c8c1dcd4c551}} 
+\index{bullet.camera.Camera@{bullet.camera.Camera}!setOrientation@{setOrientation}}
+\index{setOrientation@{setOrientation}!bullet.camera.Camera@{bullet.camera.Camera}}
+\doxysubsubsection{\texorpdfstring{setOrientation()}{setOrientation()}}
+{\footnotesize\ttfamily def bullet.\+camera.\+Camera.\+set\+Orientation (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{quaternion }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Sets the rotation of the camera in the world frame
+\end{DoxyVerb}
+ \mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_aefb94dc47367a57e0f9cc45e672e6c52}\label{classbullet_1_1camera_1_1_camera_aefb94dc47367a57e0f9cc45e672e6c52}} 
+\index{bullet.camera.Camera@{bullet.camera.Camera}!setPosition@{setPosition}}
+\index{setPosition@{setPosition}!bullet.camera.Camera@{bullet.camera.Camera}}
+\doxysubsubsection{\texorpdfstring{setPosition()}{setPosition()}}
+{\footnotesize\ttfamily def bullet.\+camera.\+Camera.\+set\+Position (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{translation,  }\item[{}]{quaternion }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Sets the translation and rotation of the camera in the world frame
+\end{DoxyVerb}
+ \mbox{\Hypertarget{classbullet_1_1camera_1_1_camera_a254f66f1540b82e7c155126af1c8ccd4}\label{classbullet_1_1camera_1_1_camera_a254f66f1540b82e7c155126af1c8ccd4}} 
+\index{bullet.camera.Camera@{bullet.camera.Camera}!setTranslation@{setTranslation}}
+\index{setTranslation@{setTranslation}!bullet.camera.Camera@{bullet.camera.Camera}}
+\doxysubsubsection{\texorpdfstring{setTranslation()}{setTranslation()}}
+{\footnotesize\ttfamily def bullet.\+camera.\+Camera.\+set\+Translation (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{translation }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Sets the translation of the camera in the world frame
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+gqn\+\_\+renderer/bullet/camera.\+py\end{DoxyCompactItemize}

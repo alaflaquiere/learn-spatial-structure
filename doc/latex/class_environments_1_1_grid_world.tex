@@ -1,0 +1,96 @@
+\hypertarget{class_environments_1_1_grid_world}{}\doxysection{Environments.\+Grid\+World Class Reference}
+\label{class_environments_1_1_grid_world}\index{Environments.GridWorld@{Environments.GridWorld}}
+Inheritance diagram for Environments.\+Grid\+World\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_environments_1_1_grid_world}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_environments_1_1_grid_world_afa86459de909ccdfb4c2b19a7a4fc384}\label{class_environments_1_1_grid_world_afa86459de909ccdfb4c2b19a7a4fc384}} 
+def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self, tore=True)
+\item 
+def \mbox{\hyperlink{class_environments_1_1_grid_world_aa8b2eb2c660f73cbe41e7cfe5cbcf1dc}{create\+\_\+discrete\+\_\+mapping\+\_\+2dpos\+\_\+to\+\_\+4dsensation}} (self)
+\item 
+def \mbox{\hyperlink{class_environments_1_1_grid_world_af0f0e0ce293604164d234005f978f400}{get\+\_\+sensation\+\_\+at\+\_\+position}} (self, position, \mbox{\hyperlink{class_environments_1_1_grid_world_a4114c03f60f408c3dd375eca5ae4c176}{display}}=False)
+\item 
+def \mbox{\hyperlink{class_environments_1_1_grid_world_a220b97c41fe9e39627bb17de16d0df6b}{generate\+\_\+shift}} (self, k=1, static=False)
+\item 
+def \mbox{\hyperlink{class_environments_1_1_grid_world_a4114c03f60f408c3dd375eca5ae4c176}{display}} (self, show=True)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_environments_1_1_grid_world_a4b95dd4371f7425111af98f16cf82905}\label{class_environments_1_1_grid_world_a4b95dd4371f7425111af98f16cf82905}} 
+{\bfseries tore}
+\item 
+\mbox{\Hypertarget{class_environments_1_1_grid_world_acbb606a34d69763de407f67fc7b4cb8b}\label{class_environments_1_1_grid_world_acbb606a34d69763de407f67fc7b4cb8b}} 
+{\bfseries pos2value\+\_\+mapping}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Tore gridworld of size (10, 10) with a sensory input of dimension 4 at each position of the grid.
+Each sensory component is generating using a random smooth periodic function of period 10 in both x and y in the grid.
+Attributes
+----------
+tore : bool
+    make the grid behave like a tore or not
+pos2value_mapping : ndarray
+    mapping from position to sensations
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_environments_1_1_grid_world_aa8b2eb2c660f73cbe41e7cfe5cbcf1dc}\label{class_environments_1_1_grid_world_aa8b2eb2c660f73cbe41e7cfe5cbcf1dc}} 
+\index{Environments.GridWorld@{Environments.GridWorld}!create\_discrete\_mapping\_2dpos\_to\_4dsensation@{create\_discrete\_mapping\_2dpos\_to\_4dsensation}}
+\index{create\_discrete\_mapping\_2dpos\_to\_4dsensation@{create\_discrete\_mapping\_2dpos\_to\_4dsensation}!Environments.GridWorld@{Environments.GridWorld}}
+\doxysubsubsection{\texorpdfstring{create\_discrete\_mapping\_2dpos\_to\_4dsensation()}{create\_discrete\_mapping\_2dpos\_to\_4dsensation()}}
+{\footnotesize\ttfamily def Environments.\+Grid\+World.\+create\+\_\+discrete\+\_\+mapping\+\_\+2dpos\+\_\+to\+\_\+4dsensation (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Generates a random smooth periodic function of period 10 in both x and y in the grid. Each function associated with one of
+the four sensory components is the composition of 3 random cosine varying along x and 3 random cosine varying along y.
+Return a mapping as an array of size (environment_size[0], environment_size[1] , 4).
+\end{DoxyVerb}
+ \mbox{\Hypertarget{class_environments_1_1_grid_world_a4114c03f60f408c3dd375eca5ae4c176}\label{class_environments_1_1_grid_world_a4114c03f60f408c3dd375eca5ae4c176}} 
+\index{Environments.GridWorld@{Environments.GridWorld}!display@{display}}
+\index{display@{display}!Environments.GridWorld@{Environments.GridWorld}}
+\doxysubsubsection{\texorpdfstring{display()}{display()}}
+{\footnotesize\ttfamily def Environments.\+Grid\+World.\+display (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{show = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Independently display the components of the sensations in the grid.
+ax - axe where to draw the surfaces
+\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{class_environments_1_1_environment}{Environments.\+Environment}}.
+
+\mbox{\Hypertarget{class_environments_1_1_grid_world_a220b97c41fe9e39627bb17de16d0df6b}\label{class_environments_1_1_grid_world_a220b97c41fe9e39627bb17de16d0df6b}} 
+\index{Environments.GridWorld@{Environments.GridWorld}!generate\_shift@{generate\_shift}}
+\index{generate\_shift@{generate\_shift}!Environments.GridWorld@{Environments.GridWorld}}
+\doxysubsubsection{\texorpdfstring{generate\_shift()}{generate\_shift()}}
+{\footnotesize\ttfamily def Environments.\+Grid\+World.\+generate\+\_\+shift (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{k = {\ttfamily 1},  }\item[{}]{static = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns k random shifts for the environment in [-5, 4]².
+if static=True, returns the default shift which is self.env_size/2.
+\end{DoxyVerb}
+ \mbox{\Hypertarget{class_environments_1_1_grid_world_af0f0e0ce293604164d234005f978f400}\label{class_environments_1_1_grid_world_af0f0e0ce293604164d234005f978f400}} 
+\index{Environments.GridWorld@{Environments.GridWorld}!get\_sensation\_at\_position@{get\_sensation\_at\_position}}
+\index{get\_sensation\_at\_position@{get\_sensation\_at\_position}!Environments.GridWorld@{Environments.GridWorld}}
+\doxysubsubsection{\texorpdfstring{get\_sensation\_at\_position()}{get\_sensation\_at\_position()}}
+{\footnotesize\ttfamily def Environments.\+Grid\+World.\+get\+\_\+sensation\+\_\+at\+\_\+position (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{position,  }\item[{}]{display = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the sensations at a given set of input positions.
+(Warping is applied to the grid if self.tore=True.)
+Inputs:
+    position - (N, 2) array
+Returns:
+    sensations - (N, 4) array
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Environments.\+py\end{DoxyCompactItemize}

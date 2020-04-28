@@ -1,0 +1,75 @@
+\hypertarget{class_agents_1_1_hinge_arm}{}\doxysection{Agents.\+Hinge\+Arm Class Reference}
+\label{class_agents_1_1_hinge_arm}\index{Agents.HingeArm@{Agents.HingeArm}}
+Inheritance diagram for Agents.\+Hinge\+Arm\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_agents_1_1_hinge_arm}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm_a194fe60b24f59b7b84a10791813e38f7}\label{class_agents_1_1_hinge_arm_a194fe60b24f59b7b84a10791813e38f7}} 
+def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self, type\+\_\+agent, n\+\_\+motors, size\+\_\+regular\+\_\+grid)
+\item 
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm_aebff647b2377b7e9d809c13d9d52967f}\label{class_agents_1_1_hinge_arm_aebff647b2377b7e9d809c13d9d52967f}} 
+def {\bfseries get\+\_\+position\+\_\+from\+\_\+motor} (self, motor)
+\item 
+def \mbox{\hyperlink{class_agents_1_1_hinge_arm_af9804b8ae8f92e56c38c6bce438dc980}{generate\+\_\+random\+\_\+sampling}} (self, k=1)
+\item 
+def \mbox{\hyperlink{class_agents_1_1_hinge_arm_aad999111eb7e9554c114782da29d7d42}{generate\+\_\+regular\+\_\+sampling}} (self)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm_aede7cd485e6e3c8ac6a0846d024bfb04}\label{class_agents_1_1_hinge_arm_aede7cd485e6e3c8ac6a0846d024bfb04}} 
+{\bfseries motor\+\_\+amplitude}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm_ac78cd846e4ce06b170ac28c0d812fa8c}\label{class_agents_1_1_hinge_arm_ac78cd846e4ce06b170ac28c0d812fa8c}} 
+{\bfseries segments\+\_\+length}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}    An arm that can move its end-effector in a 2D space, while keeping its orientation fixed.
+    Attributes
+    ----------
+    motor_amplitude : float
+        scale by which the motor components are multiplied to command the joints
+    segments_length : list/tuple of 3 float/int
+        lengths of the arm segments\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm_af9804b8ae8f92e56c38c6bce438dc980}\label{class_agents_1_1_hinge_arm_af9804b8ae8f92e56c38c6bce438dc980}} 
+\index{Agents.HingeArm@{Agents.HingeArm}!generate\_random\_sampling@{generate\_random\_sampling}}
+\index{generate\_random\_sampling@{generate\_random\_sampling}!Agents.HingeArm@{Agents.HingeArm}}
+\doxysubsubsection{\texorpdfstring{generate\_random\_sampling()}{generate\_random\_sampling()}}
+{\footnotesize\ttfamily def Agents.\+Hinge\+Arm.\+generate\+\_\+random\+\_\+sampling (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{k = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Draw a set of k randomly selected motor configurations and associated egocentric sensor positions
+Returns:
+    motor - (k, self.n_motors) array
+    position - (k, 2) array
+\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{class_agents_1_1_agent}{Agents.\+Agent}}.
+
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm_aad999111eb7e9554c114782da29d7d42}\label{class_agents_1_1_hinge_arm_aad999111eb7e9554c114782da29d7d42}} 
+\index{Agents.HingeArm@{Agents.HingeArm}!generate\_regular\_sampling@{generate\_regular\_sampling}}
+\index{generate\_regular\_sampling@{generate\_regular\_sampling}!Agents.HingeArm@{Agents.HingeArm}}
+\doxysubsubsection{\texorpdfstring{generate\_regular\_sampling()}{generate\_regular\_sampling()}}
+{\footnotesize\ttfamily def Agents.\+Hinge\+Arm.\+generate\+\_\+regular\+\_\+sampling (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Generates a regular grid of motor configurations in the motor space.
+\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{class_agents_1_1_agent}{Agents.\+Agent}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Agents.\+py\end{DoxyCompactItemize}

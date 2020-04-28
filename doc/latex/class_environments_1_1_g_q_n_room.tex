@@ -1,0 +1,70 @@
+\hypertarget{class_environments_1_1_g_q_n_room}{}\doxysection{Environments.\+G\+Q\+N\+Room Class Reference}
+\label{class_environments_1_1_g_q_n_room}\index{Environments.GQNRoom@{Environments.GQNRoom}}
+Inheritance diagram for Environments.\+G\+Q\+N\+Room\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_environments_1_1_g_q_n_room}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_environments_1_1_g_q_n_room_a3d53a19809fad2411cd58eb2526a953a}\label{class_environments_1_1_g_q_n_room_a3d53a19809fad2411cd58eb2526a953a}} 
+def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self, n\+\_\+obstacles=16)
+\item 
+def \mbox{\hyperlink{class_environments_1_1_g_q_n_room_a432bdfd831bfdc0e4b98629cf8fab3e9}{get\+\_\+sensation\+\_\+at\+\_\+position}} (self, position, display=False)
+\item 
+def \mbox{\hyperlink{class_environments_1_1_g_q_n_room_aa8685ff7d0adff6723640240bea81783}{generate\+\_\+shift}} (self, k=1, static=False)
+\item 
+\mbox{\Hypertarget{class_environments_1_1_g_q_n_room_a057561f5877272d8822617c7f371fc9e}\label{class_environments_1_1_g_q_n_room_a057561f5877272d8822617c7f371fc9e}} 
+def {\bfseries display} (self, show=True)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_environments_1_1_g_q_n_room_a4f23314c15b8549f0b89e1151b90c1ed}\label{class_environments_1_1_g_q_n_room_a4f23314c15b8549f0b89e1151b90c1ed}} 
+{\bfseries n\+\_\+obstacles}
+\item 
+\mbox{\Hypertarget{class_environments_1_1_g_q_n_room_a0212744f5f4f0003ea2442a9d33195a6}\label{class_environments_1_1_g_q_n_room_a0212744f5f4f0003ea2442a9d33195a6}} 
+{\bfseries scene}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}A 3D room of size (7,7) randomly filled with random objects. The position (0,0) corresponds to the center of the room.
+At each position, the environment generates a sensory input corresponding to the reading of a RGB camera with a fixed orientation.
+Code adapted from https://github.com/musyoku/gqn-dataset-renderer
+Attributes
+----------
+n_obstacles : int
+    number of obstacles in the environment
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_environments_1_1_g_q_n_room_aa8685ff7d0adff6723640240bea81783}\label{class_environments_1_1_g_q_n_room_aa8685ff7d0adff6723640240bea81783}} 
+\index{Environments.GQNRoom@{Environments.GQNRoom}!generate\_shift@{generate\_shift}}
+\index{generate\_shift@{generate\_shift}!Environments.GQNRoom@{Environments.GQNRoom}}
+\doxysubsubsection{\texorpdfstring{generate\_shift()}{generate\_shift()}}
+{\footnotesize\ttfamily def Environments.\+G\+Q\+N\+Room.\+generate\+\_\+shift (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{k = {\ttfamily 1},  }\item[{}]{static = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns k random shifts for the environment in [-1.75, 1.75]^2.
+If static=True, returns the default shift which is [0, 0].
+\end{DoxyVerb}
+ \mbox{\Hypertarget{class_environments_1_1_g_q_n_room_a432bdfd831bfdc0e4b98629cf8fab3e9}\label{class_environments_1_1_g_q_n_room_a432bdfd831bfdc0e4b98629cf8fab3e9}} 
+\index{Environments.GQNRoom@{Environments.GQNRoom}!get\_sensation\_at\_position@{get\_sensation\_at\_position}}
+\index{get\_sensation\_at\_position@{get\_sensation\_at\_position}!Environments.GQNRoom@{Environments.GQNRoom}}
+\doxysubsubsection{\texorpdfstring{get\_sensation\_at\_position()}{get\_sensation\_at\_position()}}
+{\footnotesize\ttfamily def Environments.\+G\+Q\+N\+Room.\+get\+\_\+sensation\+\_\+at\+\_\+position (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{position,  }\item[{}]{display = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the sensations at a given set of input positions.
+Inputs:
+    position - (N, 2) array
+Returns:
+    sensations - (self.n_sensations, 4) array
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Environments.\+py\end{DoxyCompactItemize}

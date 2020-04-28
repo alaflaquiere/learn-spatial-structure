@@ -1,0 +1,144 @@
+\hypertarget{md__r_e_a_d_m_e_autotoc_md1}{}\doxysection{Author and Contact}\label{md__r_e_a_d_m_e_autotoc_md1}
+Alban Laflaquière (\href{mailto:alaflaquiere@softbankrobotics.com}{\texttt{ alaflaquiere@softbankrobotics.\+com}})\hypertarget{md__r_e_a_d_m_e_autotoc_md2}{}\doxysection{Introduction}\label{md__r_e_a_d_m_e_autotoc_md2}
+This repository contains the code implementing the method described in the paper \href{https://arxiv.org/abs/1906.01401}{\texttt{ Unsupervised Emergence of Egocentric Spatial Structure from Sensorimotor Prediction}} (Neur\+I\+PS, 2019).
+
+If you are using this implementation in your research, please consider giving credit by citing our paper\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@inproceedings\{laflaquiere2019spatialstructure,}
+\DoxyCodeLine{  title=\{Unsupervised Emergence of Egocentric Spatial Structure from Sensorimotor Prediction\},}
+\DoxyCodeLine{  author=\{Laflaqui\(\backslash\)`ere, Alban and Garcia Ortiz, Michael\},}
+\DoxyCodeLine{  booktitle=\{Advances in Neural Information Processing Systems\},}
+\DoxyCodeLine{  year=\{2019\}}
+\DoxyCodeLine{\}}
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md3}{}\doxysection{Structure}\label{md__r_e_a_d_m_e_autotoc_md3}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{.}
+\DoxyCodeLine{├── dataset}
+\DoxyCodeLine{|   ├── explo0}
+\DoxyCodeLine{|   |   ├── dataset000}
+\DoxyCodeLine{|   |   |   ├── agent.pkl}
+\DoxyCodeLine{|   |   |   ├── agent\_params.txt}
+\DoxyCodeLine{|   |   |   ├── dataset\_MEM.pkl}
+\DoxyCodeLine{|   |   |   ├── dataset\_MM.pkl}
+\DoxyCodeLine{|   |   |   ├── dataset\_MME.pkl}
+\DoxyCodeLine{|   |   |   ├── environment.pkl}
+\DoxyCodeLine{|   |   |   ├── environment\_params.txt}
+\DoxyCodeLine{|   |   |   ├── environment\_image.png}
+\DoxyCodeLine{|   |   |   └── generation\_params.txt}
+\DoxyCodeLine{|   |   ├── dataset001}
+\DoxyCodeLine{|   |   |   └── ...}
+\DoxyCodeLine{|   |   ├── ...}
+\DoxyCodeLine{|   |   ├── sensory\_samples\_MEM\_dataset0.png}
+\DoxyCodeLine{|   |   ├── sensory\_samples\_MEM\_dataset0.svg}
+\DoxyCodeLine{|   |   ├── sensory\_samples\_MM\_dataset0.png}
+\DoxyCodeLine{|   |   ├── sensory\_samples\_MM\_dataset0.svg}
+\DoxyCodeLine{|   |   ├── sensory\_samples\_MME\_dataset0.png}
+\DoxyCodeLine{|   |   └── sensory\_samples\_MME\_dataset0.svg}
+\DoxyCodeLine{|   ├── explo1}
+\DoxyCodeLine{|   └── ...}
+\DoxyCodeLine{├── gqn\_renderer}
+\DoxyCodeLine{|   └── ...}
+\DoxyCodeLine{├── model}
+\DoxyCodeLine{|   ├── experiment0}
+\DoxyCodeLine{|   |   ├── MEM}
+\DoxyCodeLine{|   |   |   ├── run000}
+\DoxyCodeLine{|   |   |   |   ├── display\_progress}
+\DoxyCodeLine{|   |   |   |   |   └── ...}
+\DoxyCodeLine{|   |   |   |   ├── model}
+\DoxyCodeLine{|   |   |   |   |   ├── checkpoint}
+\DoxyCodeLine{|   |   |   |   |   ├── model.ckpt.data-\/00000-\/of-\/00001}
+\DoxyCodeLine{|   |   |   |   |   ├── model.ckpt.index}
+\DoxyCodeLine{|   |   |   |   |   └── model.ckpt.meta}
+\DoxyCodeLine{|   |   |   |   ├── tb\_logs}
+\DoxyCodeLine{|   |   |   |   |   └── ...}
+\DoxyCodeLine{|   |   |   |   ├── network\_params.txt}
+\DoxyCodeLine{|   |   |   |   └── training\_params.txt}
+\DoxyCodeLine{|   |   |   ├── run001}
+\DoxyCodeLine{|   |   |   └── ...}
+\DoxyCodeLine{|   |   ├── MM}
+\DoxyCodeLine{|   |   |   └── ...}
+\DoxyCodeLine{|   |   ├──MME}
+\DoxyCodeLine{|   |   |   └── ...}
+\DoxyCodeLine{|   |   ├── curves.png}
+\DoxyCodeLine{|   |   ├── curves.svg}
+\DoxyCodeLine{|   |   ├── projection\_MEM\_run0.png}
+\DoxyCodeLine{|   |   ├── projection\_MEM\_run0.svg}
+\DoxyCodeLine{|   |   ├── projection\_MM\_run0.png}
+\DoxyCodeLine{|   |   ├── projection\_MM\_run0.svg}
+\DoxyCodeLine{|   |   ├── projection\_MME\_run0.png}
+\DoxyCodeLine{|   |   └── projection\_MME\_run0.svg}
+\DoxyCodeLine{|   ├── experiment1}
+\DoxyCodeLine{|   |   └── ...}
+\DoxyCodeLine{|   └── ...}
+\DoxyCodeLine{├── .gitignore}
+\DoxyCodeLine{├── Agents.py}
+\DoxyCodeLine{├── analyze\_network.py}
+\DoxyCodeLine{├── display\_progress.py}
+\DoxyCodeLine{├── Environments.py}
+\DoxyCodeLine{├── generate\_sensorimotor\_data.py}
+\DoxyCodeLine{├── LICENSE}
+\DoxyCodeLine{├── Network.py}
+\DoxyCodeLine{├── README.md}
+\DoxyCodeLine{├── requirements.txt}
+\DoxyCodeLine{├── tools.py}
+\DoxyCodeLine{└── train\_network.py}
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md4}{}\doxysection{Usage}\label{md__r_e_a_d_m_e_autotoc_md4}
+All scripts should be run using Python 3.\+5. You will also need Tensor\+Flow to be properly installed on your computer to train the network (tested on tf versions 1.\+14).
+
+To generate 50 sensorimotor datasets of 150000 transitions and save them in dataset/explo0, use\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{generate\_sensorimotor\_data.py -\/n 150000 -\/t <type> -\/r 50 -\/d dataset/explo0}
+\end{DoxyCode}
+
+
+$<$type$>$ can be one of the three strings\+:
+
+
+\begin{DoxyItemize}
+\item gridexplorer3dof -\/ for an agent with 3 motor DoF in a discrete gridworld (fast)
+\item gridexplorer6dof -\/ for an agent with 6 motor DoF in a discrete gridworld (fast)
+\item armroom3dof -\/ for a three-\/segment arm moving a R\+GB camera in a 3D environment with 3 motors (slow)
+\item armroom6dof -\/ for a three-\/segment arm moving a R\+GB camera in a 3D environment with 6 motors (slow)
+\end{DoxyItemize}
+
+To train a network for 50000 epochs on these datasets with a motor encoding space of dimension 3 and save the models in model/experiment0, use\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{train\_network.py -\/dd dataset/explo0 -\/dm model/experiment0 -\/dh 3 -\/e 50000 -\/v}
+\end{DoxyCode}
+
+
+To track the representation quality during training, use\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{tensorboard -\/-\/logdir=model/experiment0 -\/-\/host=localhost}
+\end{DoxyCode}
+
+
+and connect to the Tensor\+Board server.
+
+To analyze the results of the training and save the corresponding curves in model/experiment0, use\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{analyze\_network.py -\/d model/experiment0}
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md5}{}\doxysection{Advanced control}\label{md__r_e_a_d_m_e_autotoc_md5}
+For a finer control of the simulation, use\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{generate\_sensorimotor\_data.py -\/n <number\_transitions> -\/t <type> -\/r <number\_datasets> -\/d <dataset\_destination> -\/v <visualization\_flag>}
+\DoxyCodeLine{}
+\DoxyCodeLine{train\_network.py -\/dd <dataset\_directory> -\/dm <model\_destination> -\/dh <encoding\_dimension> -\/e <number\_epochs> -\/sm <motor\_noise> -\/ss <sensor\_noise> -\/n <number\_of\_runs\_if\_single\_dataset> -\/v <visualization\_flag> -\/gpu <gpu\_usage\_flag> -\/mem <train\_on\_MEM\_flag> -\/mm <train\_on\_MM\_flag> -\/mme <train\_on\_MME\_flag>}
+\DoxyCodeLine{}
+\DoxyCodeLine{analyze\_network.py -\/d <model\_directory> -\/i <run\_index\_to\_display>}
+\end{DoxyCode}
+
+
+or check the scripts and provided help\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{generate\_sensorimotor\_data.py -\/h}
+\DoxyCodeLine{}
+\DoxyCodeLine{train\_network.py -\/h}
+\DoxyCodeLine{}
+\DoxyCodeLine{analyze\_network.py -\/h}
+\end{DoxyCode}
+ 

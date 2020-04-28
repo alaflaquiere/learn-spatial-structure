@@ -1,0 +1,72 @@
+\hypertarget{class_agents_1_1_agent}{}\doxysection{Agents.\+Agent Class Reference}
+\label{class_agents_1_1_agent}\index{Agents.Agent@{Agents.Agent}}
+Inheritance diagram for Agents.\+Agent\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.625000cm]{class_agents_1_1_agent}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_agent_a64b7cebfebffd023a3958036740bde1f}\label{class_agents_1_1_agent_a64b7cebfebffd023a3958036740bde1f}} 
+def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self, type\+\_\+agent, n\+\_\+motors, size\+\_\+regular\+\_\+grid)
+\item 
+\mbox{\Hypertarget{class_agents_1_1_agent_a7b4f75a54874d9f0cb2de575bc521e20}\label{class_agents_1_1_agent_a7b4f75a54874d9f0cb2de575bc521e20}} 
+def {\bfseries generate\+\_\+random\+\_\+sampling} (self, k)
+\item 
+\mbox{\Hypertarget{class_agents_1_1_agent_ae7f908d2093ea59fee0380bc569a4503}\label{class_agents_1_1_agent_ae7f908d2093ea59fee0380bc569a4503}} 
+def {\bfseries generate\+\_\+regular\+\_\+sampling} (self)
+\item 
+\mbox{\Hypertarget{class_agents_1_1_agent_a1ad7bfe1e2d33f3200712fde1ff4fedb}\label{class_agents_1_1_agent_a1ad7bfe1e2d33f3200712fde1ff4fedb}} 
+def {\bfseries display} (self, motor\+\_\+configuration)
+\item 
+def \mbox{\hyperlink{class_agents_1_1_agent_ac8574b7462ebbf15fdb7297030240fdb}{save}} (self, destination)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_agent_a1947be6dc433a99c1301604256355709}\label{class_agents_1_1_agent_a1947be6dc433a99c1301604256355709}} 
+{\bfseries type}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_agent_a5ade4506a0e78e3a384c4eb77b3ed3f6}\label{class_agents_1_1_agent_a5ade4506a0e78e3a384c4eb77b3ed3f6}} 
+{\bfseries n\+\_\+motors}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_agent_a94597e17d000e2fc98415c7e834562d3}\label{class_agents_1_1_agent_a94597e17d000e2fc98415c7e834562d3}} 
+{\bfseries size\+\_\+regular\+\_\+grid}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}    type: str
+        type of agent
+    n_motors : int
+        number of independent motor components in [-1, 1]
+    size_regular_grid: int
+        number of samples that form the regular sampling of the motor space
+
+    generate_random_sampling(k):
+        randomly explores the motor space and returns the motor samples and corresponding sensor egocentric positions
+    generate_regular_sampling():
+        returns a regular sampling of the motor space and the corresponding sensor egocentric positions
+    display(motor):
+        displays the agent's configuration associated with an input motor command
+    log(dir):
+        logs the agent's parameters
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_agents_1_1_agent_ac8574b7462ebbf15fdb7297030240fdb}\label{class_agents_1_1_agent_ac8574b7462ebbf15fdb7297030240fdb}} 
+\index{Agents.Agent@{Agents.Agent}!save@{save}}
+\index{save@{save}!Agents.Agent@{Agents.Agent}}
+\doxysubsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily def Agents.\+Agent.\+save (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{destination }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Save the agent to the disk.
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Agents.\+py\end{DoxyCompactItemize}

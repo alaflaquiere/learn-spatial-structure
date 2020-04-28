@@ -1,0 +1,72 @@
+\hypertarget{class_agents_1_1_hinge_arm6dof}{}\doxysection{Agents.\+Hinge\+Arm6dof Class Reference}
+\label{class_agents_1_1_hinge_arm6dof}\index{Agents.HingeArm6dof@{Agents.HingeArm6dof}}
+Inheritance diagram for Agents.\+Hinge\+Arm6dof\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_agents_1_1_hinge_arm6dof}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm6dof_aec22c507746af9c8087360edd1355f93}\label{class_agents_1_1_hinge_arm6dof_aec22c507746af9c8087360edd1355f93}} 
+def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self)
+\item 
+def \mbox{\hyperlink{class_agents_1_1_hinge_arm6dof_a9a914affbd05bb950e56d0dd8fc130ca}{get\+\_\+position\+\_\+from\+\_\+motor}} (self, motor)
+\item 
+def \mbox{\hyperlink{class_agents_1_1_hinge_arm6dof_a5959f4eb31e8566e0a45df0ae8819391}{display}} (self, motor)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm6dof_ac21f91703b29a8c5c005d1babd9ca30a}\label{class_agents_1_1_hinge_arm6dof_ac21f91703b29a8c5c005d1babd9ca30a}} 
+{\bfseries motor\+\_\+amplitude}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm6dof_a66d1b3ce442262bb91dffc2759e315e6}\label{class_agents_1_1_hinge_arm6dof_a66d1b3ce442262bb91dffc2759e315e6}} 
+{\bfseries segments\+\_\+length}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}A four-segment arm with 4 hinge and 2 translational joints that can move its end-effector in a 2D space.
+The arm has four segments of size 9 and covers a working space of radius 36.
+Note that only the position of the end-effector is considered; its orientation is considered fixed.
+Attributes
+----------
+motor_amplitude : list of float
+    scale by which the motor components are multiplied
+segments_length : list/tuple of 3 float/int
+    lengths of the arm segments
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm6dof_a5959f4eb31e8566e0a45df0ae8819391}\label{class_agents_1_1_hinge_arm6dof_a5959f4eb31e8566e0a45df0ae8819391}} 
+\index{Agents.HingeArm6dof@{Agents.HingeArm6dof}!display@{display}}
+\index{display@{display}!Agents.HingeArm6dof@{Agents.HingeArm6dof}}
+\doxysubsubsection{\texorpdfstring{display()}{display()}}
+{\footnotesize\ttfamily def Agents.\+Hinge\+Arm6dof.\+display (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{motor }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Displays the position associated with a motor configuration
+\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{class_agents_1_1_agent}{Agents.\+Agent}}.
+
+\mbox{\Hypertarget{class_agents_1_1_hinge_arm6dof_a9a914affbd05bb950e56d0dd8fc130ca}\label{class_agents_1_1_hinge_arm6dof_a9a914affbd05bb950e56d0dd8fc130ca}} 
+\index{Agents.HingeArm6dof@{Agents.HingeArm6dof}!get\_position\_from\_motor@{get\_position\_from\_motor}}
+\index{get\_position\_from\_motor@{get\_position\_from\_motor}!Agents.HingeArm6dof@{Agents.HingeArm6dof}}
+\doxysubsubsection{\texorpdfstring{get\_position\_from\_motor()}{get\_position\_from\_motor()}}
+{\footnotesize\ttfamily def Agents.\+Hinge\+Arm6dof.\+get\+\_\+position\+\_\+from\+\_\+motor (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{motor }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the coordinates of the sensor via trigonometry.
+\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{class_agents_1_1_hinge_arm}{Agents.\+Hinge\+Arm}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Agents.\+py\end{DoxyCompactItemize}

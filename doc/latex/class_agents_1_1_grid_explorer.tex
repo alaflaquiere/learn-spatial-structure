@@ -1,0 +1,92 @@
+\hypertarget{class_agents_1_1_grid_explorer}{}\doxysection{Agents.\+Grid\+Explorer Class Reference}
+\label{class_agents_1_1_grid_explorer}\index{Agents.GridExplorer@{Agents.GridExplorer}}
+Inheritance diagram for Agents.\+Grid\+Explorer\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_agents_1_1_grid_explorer}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_grid_explorer_a074ec9f8b730bbcb469a424ce856f620}\label{class_agents_1_1_grid_explorer_a074ec9f8b730bbcb469a424ce856f620}} 
+def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self, type\+\_\+agent, n\+\_\+motors, size\+\_\+regular\+\_\+grid)
+\item 
+def \mbox{\hyperlink{class_agents_1_1_grid_explorer_ac2c728fcad4f83edd65f5dea9905fac8}{generate\+\_\+random\+\_\+sampling}} (self, k=1)
+\item 
+def \mbox{\hyperlink{class_agents_1_1_grid_explorer_aa7a06d4dab95ce81390fcfafd13d5ed6}{generate\+\_\+regular\+\_\+sampling}} (self)
+\item 
+def \mbox{\hyperlink{class_agents_1_1_grid_explorer_a6b4a82cea0d90d81e13e656c74d5031b}{display}} (self, motor)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_grid_explorer_abf5f03963ba78fa22a7d983de9e449d6}\label{class_agents_1_1_grid_explorer_abf5f03963ba78fa22a7d983de9e449d6}} 
+{\bfseries state2motor\+\_\+mapping}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_grid_explorer_ab7d7e4e437eb0cc7695c1e49085607e9}\label{class_agents_1_1_grid_explorer_ab7d7e4e437eb0cc7695c1e49085607e9}} 
+{\bfseries state2pos\+\_\+mapping}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_grid_explorer_aaa6b343dfabf2e238586454581265ffe}\label{class_agents_1_1_grid_explorer_aaa6b343dfabf2e238586454581265ffe}} 
+{\bfseries n\+\_\+states}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}    A ``discrete'' agent that can move its sensor in a 5x5 grid using a non-linear redundant mapping
+    from motors configurations to positions in the 2D grid.
+    Attributes
+    ----------
+    n_states: int
+        number of possible motor states
+    state2motor_mapping : nd.array of float of size (n_states, n_motors)
+        mapping between the states and the motor configurations
+    state2pos_mapping : nd.array of int of size (n_states, 2)
+        mapping between the states and the sensor position (x, y) in [-2, 2]² in the grid\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_agents_1_1_grid_explorer_a6b4a82cea0d90d81e13e656c74d5031b}\label{class_agents_1_1_grid_explorer_a6b4a82cea0d90d81e13e656c74d5031b}} 
+\index{Agents.GridExplorer@{Agents.GridExplorer}!display@{display}}
+\index{display@{display}!Agents.GridExplorer@{Agents.GridExplorer}}
+\doxysubsubsection{\texorpdfstring{display()}{display()}}
+{\footnotesize\ttfamily def Agents.\+Grid\+Explorer.\+display (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{motor }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Displays the position associated with a motor configuration
+\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{class_agents_1_1_agent}{Agents.\+Agent}}.
+
+\mbox{\Hypertarget{class_agents_1_1_grid_explorer_ac2c728fcad4f83edd65f5dea9905fac8}\label{class_agents_1_1_grid_explorer_ac2c728fcad4f83edd65f5dea9905fac8}} 
+\index{Agents.GridExplorer@{Agents.GridExplorer}!generate\_random\_sampling@{generate\_random\_sampling}}
+\index{generate\_random\_sampling@{generate\_random\_sampling}!Agents.GridExplorer@{Agents.GridExplorer}}
+\doxysubsubsection{\texorpdfstring{generate\_random\_sampling()}{generate\_random\_sampling()}}
+{\footnotesize\ttfamily def Agents.\+Grid\+Explorer.\+generate\+\_\+random\+\_\+sampling (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{k = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Draw a set of k randomly selected motor configurations and associated sensor positions
+Returns:
+    motor - (k, self.n_motors) array
+    position - (k, 2) array
+\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{class_agents_1_1_agent}{Agents.\+Agent}}.
+
+\mbox{\Hypertarget{class_agents_1_1_grid_explorer_aa7a06d4dab95ce81390fcfafd13d5ed6}\label{class_agents_1_1_grid_explorer_aa7a06d4dab95ce81390fcfafd13d5ed6}} 
+\index{Agents.GridExplorer@{Agents.GridExplorer}!generate\_regular\_sampling@{generate\_regular\_sampling}}
+\index{generate\_regular\_sampling@{generate\_regular\_sampling}!Agents.GridExplorer@{Agents.GridExplorer}}
+\doxysubsubsection{\texorpdfstring{generate\_regular\_sampling()}{generate\_regular\_sampling()}}
+{\footnotesize\ttfamily def Agents.\+Grid\+Explorer.\+generate\+\_\+regular\+\_\+sampling (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns all the motor configurations and associated sensor positions.
+\end{DoxyVerb}
+ 
+
+Reimplemented from \mbox{\hyperlink{class_agents_1_1_agent}{Agents.\+Agent}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Agents.\+py\end{DoxyCompactItemize}

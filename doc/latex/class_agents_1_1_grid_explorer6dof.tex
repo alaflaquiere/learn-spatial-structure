@@ -1,0 +1,55 @@
+\hypertarget{class_agents_1_1_grid_explorer6dof}{}\doxysection{Agents.\+Grid\+Explorer6dof Class Reference}
+\label{class_agents_1_1_grid_explorer6dof}\index{Agents.GridExplorer6dof@{Agents.GridExplorer6dof}}
+Inheritance diagram for Agents.\+Grid\+Explorer6dof\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_agents_1_1_grid_explorer6dof}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_grid_explorer6dof_ad79146cfadf6d07e373bfdcf4565f59a}\label{class_agents_1_1_grid_explorer6dof_ad79146cfadf6d07e373bfdcf4565f59a}} 
+def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self, number\+\_\+motors=6, resolution=4)
+\item 
+def \mbox{\hyperlink{class_agents_1_1_grid_explorer6dof_abd8f23a87e0c9875f2cc5e945d3628b0}{create\+\_\+discrete\+\_\+mapping\+\_\+6dmotor\+\_\+to\+\_\+2dpos}} (self, reso)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_agents_1_1_grid_explorer6dof_a0d6fea014e6babcead940436193911b9}\label{class_agents_1_1_grid_explorer6dof_a0d6fea014e6babcead940436193911b9}} 
+{\bfseries state2pos\+\_\+mapping}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}A ``discrete'' agent that can move its sensor in a 5x5 grid using a non-linear redundant mapping from 6 motors to positions in the 2D grid.
+Attributes
+----------
+state2motor_mapping : nd.array of float of size (n_states, n_motors)
+    mapping between the states and the motor configurations
+state2pos_mapping : nd.array of int of size (n_states, 2)
+    mapping between the states and the sensor position (x, y) in [-2, 2]² in the grid
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_agents_1_1_grid_explorer6dof_abd8f23a87e0c9875f2cc5e945d3628b0}\label{class_agents_1_1_grid_explorer6dof_abd8f23a87e0c9875f2cc5e945d3628b0}} 
+\index{Agents.GridExplorer6dof@{Agents.GridExplorer6dof}!create\_discrete\_mapping\_6dmotor\_to\_2dpos@{create\_discrete\_mapping\_6dmotor\_to\_2dpos}}
+\index{create\_discrete\_mapping\_6dmotor\_to\_2dpos@{create\_discrete\_mapping\_6dmotor\_to\_2dpos}!Agents.GridExplorer6dof@{Agents.GridExplorer6dof}}
+\doxysubsubsection{\texorpdfstring{create\_discrete\_mapping\_6dmotor\_to\_2dpos()}{create\_discrete\_mapping\_6dmotor\_to\_2dpos()}}
+{\footnotesize\ttfamily def Agents.\+Grid\+Explorer6dof.\+create\+\_\+discrete\+\_\+mapping\+\_\+6dmotor\+\_\+to\+\_\+2dpos (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{reso }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a random mapping from motor configurations to egocentric positions of the sensor.
+The mapping is discrete, such that a limited set of motor configurations is associated with a limited set of sensors positions (of smaller
+cardinality due to redundancy). For convenience, the mapping is split into a state2motor_mapping and a state2pos_mapping, where a state
+corresponds to the index given to a motor configuration.
+Returns:
+    state2motor_mapping - (reso**n_motors, 6) array
+    state2pos_mapping - (reso**n_motors, 2) array
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Agents.\+py\end{DoxyCompactItemize}

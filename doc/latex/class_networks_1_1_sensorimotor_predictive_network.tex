@@ -1,0 +1,213 @@
+\hypertarget{class_networks_1_1_sensorimotor_predictive_network}{}\doxysection{Networks.\+Sensorimotor\+Predictive\+Network Class Reference}
+\label{class_networks_1_1_sensorimotor_predictive_network}\index{Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a4325c7ccba96cf844c3b85b57c7d4acb}\label{class_networks_1_1_sensorimotor_predictive_network_a4325c7ccba96cf844c3b85b57c7d4acb}} 
+def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self, dim\+\_\+motor=3, dim\+\_\+sensor=4, dim\+\_\+enc=3, encoding\+\_\+layers\+\_\+size=\mbox{[}150, 100, 50\mbox{]}, predictive\+\_\+layers\+\_\+size=\mbox{[}200, 150, 100\mbox{]}, act\+\_\+fn=\char`\"{}selu\char`\"{}, learning\+\_\+rate\+\_\+param=\mbox{[}1e-\/3, 1e-\/5, 8e4, 1\mbox{]}, batch\+\_\+size=100, model\+\_\+destination=\char`\"{}model/trained\char`\"{})
+\item 
+def \mbox{\hyperlink{class_networks_1_1_sensorimotor_predictive_network_a63800c438842142f7df6bd18a00d99d2}{train}} (self, data, number\+\_\+epochs=1)
+\item 
+def \mbox{\hyperlink{class_networks_1_1_sensorimotor_predictive_network_aaa17dea7fb60dad08ae9bdacd8a4cf59}{full\+\_\+train}} (self, n\+\_\+epochs, data, disp, save\+\_\+frames=False)
+\item 
+def \mbox{\hyperlink{class_networks_1_1_sensorimotor_predictive_network_abf19903402f6d7dfa28c6dbf562c61ab}{compute\+\_\+weighted\+\_\+affine\+\_\+errors\+\_\+in\+\_\+P}} (self, target\+\_\+set, origin\+\_\+set, weight=0)
+\item 
+def \mbox{\hyperlink{class_networks_1_1_sensorimotor_predictive_network_a2532cbd407667cf6f7faf0fbea598182}{compute\+\_\+topology\+\_\+error\+\_\+in\+\_\+H}} (self, p\+\_\+set, h\+\_\+set, weight=10)
+\item 
+def \mbox{\hyperlink{class_networks_1_1_sensorimotor_predictive_network_ab55ea78fdc3f966cd82594826e299aee}{track\+\_\+progress}} (self, data)
+\item 
+def \mbox{\hyperlink{class_networks_1_1_sensorimotor_predictive_network_ab7db2385ea9189aac4d3ce1b94f27d38}{save\+\_\+network}} (self)
+\item 
+def \mbox{\hyperlink{class_networks_1_1_sensorimotor_predictive_network_ae3dea636c4fa7a81200ef89b78c37cfc}{save}} (self, destination)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a17ff543c9cf1732a75ae73a07fc8072d}\label{class_networks_1_1_sensorimotor_predictive_network_a17ff543c9cf1732a75ae73a07fc8072d}} 
+{\bfseries type}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_ae2e8229d606842509b70c446a111298d}\label{class_networks_1_1_sensorimotor_predictive_network_ae2e8229d606842509b70c446a111298d}} 
+{\bfseries dim\+\_\+motor}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a68aaaf48023d228a43fbaeab741c3d93}\label{class_networks_1_1_sensorimotor_predictive_network_a68aaaf48023d228a43fbaeab741c3d93}} 
+{\bfseries dim\+\_\+sensor}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a63e6e96cb078b1c680deb631743ced5c}\label{class_networks_1_1_sensorimotor_predictive_network_a63e6e96cb078b1c680deb631743ced5c}} 
+{\bfseries dim\+\_\+enc}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a7eb5c0f653ea76acb0b4d5b3c735c8d8}\label{class_networks_1_1_sensorimotor_predictive_network_a7eb5c0f653ea76acb0b4d5b3c735c8d8}} 
+{\bfseries encoding\+\_\+layers\+\_\+size}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a6e29ddf65f649ab7a9fbe1611ed67716}\label{class_networks_1_1_sensorimotor_predictive_network_a6e29ddf65f649ab7a9fbe1611ed67716}} 
+{\bfseries predictive\+\_\+layers\+\_\+size}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a90b18cc63fda0f91cffd86099d729c80}\label{class_networks_1_1_sensorimotor_predictive_network_a90b18cc63fda0f91cffd86099d729c80}} 
+{\bfseries activation}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_ab9aa4ebaa16bc234999f1497b587b208}\label{class_networks_1_1_sensorimotor_predictive_network_ab9aa4ebaa16bc234999f1497b587b208}} 
+{\bfseries learning\+\_\+rate\+\_\+param}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a8f719c90ed5acfb434a74f5edabb17e7}\label{class_networks_1_1_sensorimotor_predictive_network_a8f719c90ed5acfb434a74f5edabb17e7}} 
+{\bfseries batch\+\_\+size}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_adbb619767063979554216a278143fea0}\label{class_networks_1_1_sensorimotor_predictive_network_adbb619767063979554216a278143fea0}} 
+{\bfseries model\+\_\+destination}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a0ed086894c1bc6b3b320df2fc0932088}\label{class_networks_1_1_sensorimotor_predictive_network_a0ed086894c1bc6b3b320df2fc0932088}} 
+{\bfseries lin\+\_\+reg\+\_\+model}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_af07be5654e2a1dfaad98082a1f81f0f1}\label{class_networks_1_1_sensorimotor_predictive_network_af07be5654e2a1dfaad98082a1f81f0f1}} 
+{\bfseries motor\+\_\+t}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a10e4b93e2638e2b053fd80d44446bb01}\label{class_networks_1_1_sensorimotor_predictive_network_a10e4b93e2638e2b053fd80d44446bb01}} 
+{\bfseries motor\+\_\+tp}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_ab1dd2ede17a041e65e9347eb5bd1a1ab}\label{class_networks_1_1_sensorimotor_predictive_network_ab1dd2ede17a041e65e9347eb5bd1a1ab}} 
+{\bfseries sensor\+\_\+t}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a054f55b96acfca46c24983048cc4f1b4}\label{class_networks_1_1_sensorimotor_predictive_network_a054f55b96acfca46c24983048cc4f1b4}} 
+{\bfseries sensor\+\_\+tp}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a49703f5900eef2e407ce779e2764c40c}\label{class_networks_1_1_sensorimotor_predictive_network_a49703f5900eef2e407ce779e2764c40c}} 
+{\bfseries metric\+\_\+error}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_aa8671e5555bbd9ecf2b46fdddda4c1e9}\label{class_networks_1_1_sensorimotor_predictive_network_aa8671e5555bbd9ecf2b46fdddda4c1e9}} 
+{\bfseries topology\+\_\+error\+\_\+in\+\_\+P}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a271e041365488eb0624529dfeff9831d}\label{class_networks_1_1_sensorimotor_predictive_network_a271e041365488eb0624529dfeff9831d}} 
+{\bfseries topology\+\_\+error\+\_\+in\+\_\+H}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a454eb73546541154e7685431c2c2149e}\label{class_networks_1_1_sensorimotor_predictive_network_a454eb73546541154e7685431c2c2149e}} 
+{\bfseries output\+\_\+encode\+\_\+module\+\_\+t}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_ae8e2c1a55a7e9fa0b0d874d43ad9047b}\label{class_networks_1_1_sensorimotor_predictive_network_ae8e2c1a55a7e9fa0b0d874d43ad9047b}} 
+{\bfseries output\+\_\+encode\+\_\+module\+\_\+tp}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a2da90f347d8f3a648959f176c535c6d0}\label{class_networks_1_1_sensorimotor_predictive_network_a2da90f347d8f3a648959f176c535c6d0}} 
+{\bfseries output\+\_\+prediction\+\_\+module}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a43322ce12196bbd6b2ac5b9316b05d87}\label{class_networks_1_1_sensorimotor_predictive_network_a43322ce12196bbd6b2ac5b9316b05d87}} 
+{\bfseries loss}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_ab5f494d9a03afefd78a82a3f549b1d80}\label{class_networks_1_1_sensorimotor_predictive_network_ab5f494d9a03afefd78a82a3f549b1d80}} 
+{\bfseries global\+\_\+step}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a9a1140a8f3ef2fd448fae8f5a39cd2c0}\label{class_networks_1_1_sensorimotor_predictive_network_a9a1140a8f3ef2fd448fae8f5a39cd2c0}} 
+{\bfseries learning\+\_\+rate}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a540cd1196d0b1f7576db390db7985551}\label{class_networks_1_1_sensorimotor_predictive_network_a540cd1196d0b1f7576db390db7985551}} 
+{\bfseries minimize\+\_\+op}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a831c7cadd3e20eaf07f90c03017e0e58}\label{class_networks_1_1_sensorimotor_predictive_network_a831c7cadd3e20eaf07f90c03017e0e58}} 
+{\bfseries merged\+\_\+summaries}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a16eb76c405ae29d165013feb86b71102}\label{class_networks_1_1_sensorimotor_predictive_network_a16eb76c405ae29d165013feb86b71102}} 
+{\bfseries graph}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a14f602747b8bdfcfaa20b46125d67797}\label{class_networks_1_1_sensorimotor_predictive_network_a14f602747b8bdfcfaa20b46125d67797}} 
+{\bfseries summaries\+\_\+writer}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_aa4c4c6779d4267b409e24903cb7eed93}\label{class_networks_1_1_sensorimotor_predictive_network_aa4c4c6779d4267b409e24903cb7eed93}} 
+{\bfseries saver}
+\item 
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_aa7a927d0e68f7d12c4e9b56d9dd18638}\label{class_networks_1_1_sensorimotor_predictive_network_aa7a927d0e68f7d12c4e9b56d9dd18638}} 
+{\bfseries sess}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Network to perform sensory prediction based on a current motor configuration, a current sensory input, and a future motor configuration.
+Both the motor configurations are encoded using a single (siamese) module.
+Parameters:
+    dim_motor - dimension of the motor configuration
+    dim_sensor - dimension of the sensory input
+    dim_enc - dimension of the output of the motor encoding module
+    encoding_layers_size - sizes of the successive layers of the motor encoding module
+    predictive_layers_size - sizes of the successive layers of the sensory predictive module
+    act_fn - activation function
+    learning_rate_param - parameters for the evolution of the learning rate
+    batch_size - size of the batch sent at each iteration
+    model_destination - directory in which to save the model and temporary files
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a2532cbd407667cf6f7faf0fbea598182}\label{class_networks_1_1_sensorimotor_predictive_network_a2532cbd407667cf6f7faf0fbea598182}} 
+\index{Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}!compute\_topology\_error\_in\_H@{compute\_topology\_error\_in\_H}}
+\index{compute\_topology\_error\_in\_H@{compute\_topology\_error\_in\_H}!Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}}
+\doxysubsubsection{\texorpdfstring{compute\_topology\_error\_in\_H()}{compute\_topology\_error\_in\_H()}}
+{\footnotesize\ttfamily def Networks.\+Sensorimotor\+Predictive\+Network.\+compute\+\_\+topology\+\_\+error\+\_\+in\+\_\+H (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{p\+\_\+set,  }\item[{}]{h\+\_\+set,  }\item[{}]{weight = {\ttfamily 10} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Estimates how much the topology of P_set is respected by H_set.
+Inputs:
+    p_set - (k, dim_P) array
+    h_set - (k, dim_H) array
+    weight - relative weight of smaller P distances relative to large distances (weight >= 0, with weight = 0 for a uniform weighting)
+Returns:
+    weighted_error - mean topological dissimilarity
+\end{DoxyVerb}
+ \mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_abf19903402f6d7dfa28c6dbf562c61ab}\label{class_networks_1_1_sensorimotor_predictive_network_abf19903402f6d7dfa28c6dbf562c61ab}} 
+\index{Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}!compute\_weighted\_affine\_errors\_in\_P@{compute\_weighted\_affine\_errors\_in\_P}}
+\index{compute\_weighted\_affine\_errors\_in\_P@{compute\_weighted\_affine\_errors\_in\_P}!Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}}
+\doxysubsubsection{\texorpdfstring{compute\_weighted\_affine\_errors\_in\_P()}{compute\_weighted\_affine\_errors\_in\_P()}}
+{\footnotesize\ttfamily def Networks.\+Sensorimotor\+Predictive\+Network.\+compute\+\_\+weighted\+\_\+affine\+\_\+errors\+\_\+in\+\_\+P (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{target\+\_\+set,  }\item[{}]{origin\+\_\+set,  }\item[{}]{weight = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute the affine transformation: target_set = origin_set * coef_ + intercept_
+Estimate the error between the metrics of target_set and of the projection of origin_set in the target_set space.
+This error can be weighted to focus more or less on small distances in the target space.
+Inputs:
+    target_set - (k, dim_target_space) array
+    origin_set - (k, dim_origin_space) array
+    weight - relative weight of smaller distances relative to large distances (weight >= 0, with weight = 0 for a uniform weighting)
+Returns:
+    weighted_error - mean metric error between the projected set and the target_set
+    fitted - linear projection of origin_set into the target space
+\end{DoxyVerb}
+ \mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_aaa17dea7fb60dad08ae9bdacd8a4cf59}\label{class_networks_1_1_sensorimotor_predictive_network_aaa17dea7fb60dad08ae9bdacd8a4cf59}} 
+\index{Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}!full\_train@{full\_train}}
+\index{full\_train@{full\_train}!Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}}
+\doxysubsubsection{\texorpdfstring{full\_train()}{full\_train()}}
+{\footnotesize\ttfamily def Networks.\+Sensorimotor\+Predictive\+Network.\+full\+\_\+train (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{n\+\_\+epochs,  }\item[{}]{data,  }\item[{}]{disp,  }\item[{}]{save\+\_\+frames = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Performs successive training cycles of 1000 epochs on data up to n_epochs epochs. After each cycle, evaluates the network, save the variables
+tracked in Tensorboard, and save the network.
+If disp=True, also launch display_progress.py in a parallel process to visualize the network progress.
+If save_frames=True, frames of the latent space are save during the training and a video is compiled after the training.
+\end{DoxyVerb}
+ \mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_ae3dea636c4fa7a81200ef89b78c37cfc}\label{class_networks_1_1_sensorimotor_predictive_network_ae3dea636c4fa7a81200ef89b78c37cfc}} 
+\index{Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}!save@{save}}
+\index{save@{save}!Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}}
+\doxysubsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily def Networks.\+Sensorimotor\+Predictive\+Network.\+save (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{destination }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Writes the network's attributes to the disk.
+\end{DoxyVerb}
+ \mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_ab7db2385ea9189aac4d3ce1b94f27d38}\label{class_networks_1_1_sensorimotor_predictive_network_ab7db2385ea9189aac4d3ce1b94f27d38}} 
+\index{Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}!save\_network@{save\_network}}
+\index{save\_network@{save\_network}!Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}}
+\doxysubsubsection{\texorpdfstring{save\_network()}{save\_network()}}
+{\footnotesize\ttfamily def Networks.\+Sensorimotor\+Predictive\+Network.\+save\+\_\+network (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Saves the network in dir_model/model.
+\end{DoxyVerb}
+ \mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_ab55ea78fdc3f966cd82594826e299aee}\label{class_networks_1_1_sensorimotor_predictive_network_ab55ea78fdc3f966cd82594826e299aee}} 
+\index{Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}!track\_progress@{track\_progress}}
+\index{track\_progress@{track\_progress}!Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}}
+\doxysubsubsection{\texorpdfstring{track\_progress()}{track\_progress()}}
+{\footnotesize\ttfamily def Networks.\+Sensorimotor\+Predictive\+Network.\+track\+\_\+progress (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{data }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Computes and saves the variables tracked via Tensorboard + save the data to display by display_progress.py
+\end{DoxyVerb}
+ \mbox{\Hypertarget{class_networks_1_1_sensorimotor_predictive_network_a63800c438842142f7df6bd18a00d99d2}\label{class_networks_1_1_sensorimotor_predictive_network_a63800c438842142f7df6bd18a00d99d2}} 
+\index{Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}!train@{train}}
+\index{train@{train}!Networks.SensorimotorPredictiveNetwork@{Networks.SensorimotorPredictiveNetwork}}
+\doxysubsubsection{\texorpdfstring{train()}{train()}}
+{\footnotesize\ttfamily def Networks.\+Sensorimotor\+Predictive\+Network.\+train (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{data,  }\item[{}]{number\+\_\+epochs = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Perform <number_epochs> iterations of training on minibatches from the transitions <data>.
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Networks.\+py\end{DoxyCompactItemize}
