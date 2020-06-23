@@ -78,6 +78,46 @@ def load_sensorimotor_transitions(data_directory, n_transitions=None):
     return data
 
 
+def load_compressed_sensorimotor_transitions(data_directory, n_transitions=None):
+    """
+    Loads compressed sensorimotor transitions from a npz file created by generate_sensorimotor_data.py.
+    Returns the data in a dictionary.
+    """
+
+    # check dir_data
+    check_directory_exists(data_directory)
+
+    print("loading sensorimotor data from {}...".format(data_directory))
+
+    with np.load(data_directory) as npzfile:
+        data = dict(zip(npzfile.files, [npzfile[x] for x in npzfile.files]))
+
+    # identify potential NaN entries
+    to_discard = np.argwhere(np.logical_or(np.isnan(data["sensor_t"][:, 0]), np.isnan(data["sensor_tp"][:, 0])))
+
+    # remove NaN entries
+    for i in ["motor_t", "sensor_t", "shift_t", "motor_tp", "sensor_tp", "shift_tp"]:
+        data[i] = np.delete(data[i], to_discard, axis=0)
+
+    # get the number of transitions
+    k = data["motor_t"].shape[0]
+
+    # reduce the size of the dataset if necessary
+    if n_transitions is None:
+        n_transitions = k
+    elif n_transitions < k:
+        to_discard = np.arange(n_transitions, k)
+        for i in ["motor_t", "sensor_t", "shift_t", "motor_tp", "sensor_tp", "shift_tp"]:
+            data[i] = np.delete(data[i], to_discard, axis=0)
+    else:
+        n_transitions = k
+        print("Warning: the requested number of data is greater than the size of the dataset.")
+
+    print("loaded {} sensorimotor data".format(n_transitions))
+
+    return data
+
+
 def normalize_data(data):
     """
     Normalize the data such that the motor and sensor components are in [-1, 1]
