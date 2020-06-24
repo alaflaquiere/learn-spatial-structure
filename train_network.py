@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
             # get the correct data folder and file name
             sub_dir_data = "{}/dataset{:03}".format(dir_data, trial % len(subfolder_list))
-            filename = "{}/dataset_{}.pkl".format(sub_dir_data, simu_type)
+            filename = "{}/dataset_{}.npz".format(sub_dir_data, simu_type)
 
             # get the destination folder
             dir_model_trial = "/".join([dir_model, simu_type, "run" + "{:03}".format(trial)])
@@ -123,7 +123,7 @@ if __name__ == "__main__":
             print("[{} EXPLORATION - (dataset: {})]".format(simu_type, filename))
 
             # load the data
-            transitions = load_sensorimotor_transitions(filename)
+            transitions = load_compressed_sensorimotor_transitions(filename)
             dim_m = transitions["motor_t"].shape[1]
             dim_s = transitions["sensor_t"].shape[1]
 
