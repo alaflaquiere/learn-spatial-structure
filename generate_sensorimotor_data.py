@@ -137,6 +137,7 @@ def generate_sensorimotor_data(agent, environment, explo_type, k, dest_data="dat
         shifts_tp = shifts_t
     else:
         print("ERROR: wrong type of exploration - use 'MM', 'MEM', or 'MME'")
+        return False
 
     # compute the holistic position of the sensor
     holi_pos_t = ego_pos_t + shifts_t

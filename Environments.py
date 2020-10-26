@@ -393,8 +393,6 @@ class GQNBulletRoom(Environment):
 
         # set the camera orientation
         yaw, pitch = bullet_tools.compute_yaw_and_pitch(camera_direction)
-        self.camera.setOrientation(pybullet.getQuaternionFromEuler(
-            [0.0, pitch, yaw]))
 
         if display:
             fig = plt.figure(figsize=(4, 4))
@@ -402,9 +400,12 @@ class GQNBulletRoom(Environment):
 
         for i in tqdm(range(position.shape[0]), desc="GQNBulletRoom", mininterval=1):
 
-            # set the camera position
+            # set the camera position and orientation
             camera_position = [position[i, 0], camera_height, position[i, 1]]
-            self.camera.setTranslation(bullet_tools.transform_pos_for_bullet(camera_position))
+            self.camera.setPosition(
+                bullet_tools.transform_pos_for_bullet(camera_position),
+                pybullet.getQuaternionFromEuler([0.0, pitch, yaw])
+            )
 
             # render
             image = self.camera.getFrame()
@@ -448,10 +449,12 @@ class GQNBulletRoom(Environment):
 
         overview_camera = Camera(45, CameraResolution(resolution, resolution))
 
-        # set the camera orientation and position
+        # set the camera position and orientation
         yaw, pitch = bullet_tools.compute_yaw_and_pitch(camera_direction)
-        overview_camera.setOrientation(pybullet.getQuaternionFromEuler([0.0, pitch, yaw]))
-        overview_camera.setTranslation(bullet_tools.transform_pos_for_bullet(camera_position))
+        overview_camera.setPosition(
+            bullet_tools.transform_pos_for_bullet(camera_position),
+            pybullet.getQuaternionFromEuler([0.0, pitch, yaw])
+        )
 
         fig = plt.figure(figsize=(8, 8))
         ax = fig.add_subplot(1, 1, 1)
