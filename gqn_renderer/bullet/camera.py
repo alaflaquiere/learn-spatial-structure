@@ -47,8 +47,8 @@ class Camera:
             fov - The fov of the camera, float or np.float
             resolution - The resolution of the camera, CameraResolution object
         """
-        self.setOrientation([0, 0, 0, 1])
         self.setTranslation([0, 0, 1])
+        self.setOrientation([0, 0, 0, 1])
         self.resolution = resolution
         self.projection_matrix = pybullet.computeProjectionMatrixFOV(
             fov,
@@ -67,15 +67,6 @@ class Camera:
         """
         self.translation = translation
 
-        # self.camera_target = [
-        #     self.translation[0] + self.forward_vector[0],
-        #     self.translation[1] + self.forward_vector[1],
-        #     self.translation[2] + self.forward_vector[2]]
-        self.camera_target = [
-            self.translation[0] + self.forward_vector[0],
-            self.translation[1] + self.forward_vector[1],
-            self.translation[2] + self.forward_vector[2]]
-
     def setOrientation(self, quaternion):
         """
         Sets the rotation of the camera in the world frame
@@ -84,10 +75,10 @@ class Camera:
         self.forward_vector = [rotation[0], rotation[3], rotation[6]]
         self.up_vector = [rotation[2], rotation[5], rotation[8]]
 
-        # self.camera_target = [
-        #     self.translation[0] + forward_vector[0] * 10,
-        #     self.translation[1] + forward_vector[1] * 10,
-        #     self.translation[2] + forward_vector[2] * 10]
+        self.camera_target = [
+            self.translation[0] + self.forward_vector[0] * 10,
+            self.translation[1] + self.forward_vector[1] * 10,
+            self.translation[2] + self.forward_vector[2] * 10]
 
     def setPosition(self, translation, quaternion):
         """

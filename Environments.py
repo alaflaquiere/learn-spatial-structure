@@ -371,7 +371,8 @@ class GQNBulletRoom(Environment):
 
         # Create the camera
         self.camera = Camera(45, CameraResolution(16, 16))
-        self.camera.setTranslation([0, -1, 1])
+        self._camera_height = 1.6
+        self._pitch = 0.62
 
     def get_sensation_at_position(self, position, display=False):
         """
@@ -382,17 +383,11 @@ class GQNBulletRoom(Environment):
             sensations - (self.n_sensations, 4) array
         """
 
-        camera_height = 1.6
-        camera_direction = np.array([2.5, 1.8, 0])
-
         # Deal with the case of a single position
         position = position.reshape(-1, 2)
 
         # Prepare variable
         sensations = np.full((position.shape[0], self.n_sensations), np.nan)
-
-        # set the camera orientation
-        yaw, pitch = bullet_tools.compute_yaw_and_pitch(camera_direction)
 
         if display:
             fig = plt.figure(figsize=(4, 4))
@@ -401,10 +396,10 @@ class GQNBulletRoom(Environment):
         for i in tqdm(range(position.shape[0]), desc="GQNBulletRoom", mininterval=1):
 
             # set the camera position and orientation
-            camera_position = [position[i, 0], camera_height, position[i, 1]]
+            camera_position = [position[i, 0], position[i, 1], self._camera_height]
             self.camera.setPosition(
-                bullet_tools.transform_pos_for_bullet(camera_position),
-                pybullet.getQuaternionFromEuler([0.0, pitch, yaw])
+                translation=camera_position,
+                quaternion=pybullet.getQuaternionFromEuler([0.0, self._pitch, 0.0])
             )
 
             # render
@@ -443,17 +438,16 @@ class GQNBulletRoom(Environment):
         bullet_tools.tear_down_scene()
 
     def display(self, show=True):
-        camera_position = [8, 8, 8]
-        camera_direction = np.array((5, 4.7, 5))
         resolution = 512
 
         overview_camera = Camera(45, CameraResolution(resolution, resolution))
 
         # set the camera position and orientation
-        yaw, pitch = bullet_tools.compute_yaw_and_pitch(camera_direction)
+        yaw = np.pi / 4
+        pitch = np.pi / 5.5
         overview_camera.setPosition(
-            bullet_tools.transform_pos_for_bullet(camera_position),
-            pybullet.getQuaternionFromEuler([0.0, pitch, yaw])
+            translation=[-7.5, -7.5, 7.5],
+            quaternion=pybullet.getQuaternionFromEuler([0.0, pitch, yaw])
         )
 
         fig = plt.figure(figsize=(8, 8))
